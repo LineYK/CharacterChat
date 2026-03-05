@@ -1,13 +1,13 @@
-package com.lineyk.charaterchat;
+package com.lineyk.characterchat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CharaterChatApplication {
+public class CharacterChatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CharaterChatApplication.class, args);
+        SpringApplication.run(CharacterChatApplication.class, args);
     }
 
 }

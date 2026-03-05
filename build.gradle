@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.lineyk'
 version = '0.0.1-SNAPSHOT'
-description = 'CharaterChat'
+description = 'CharacterChat'
 
 java {
     toolchain {
