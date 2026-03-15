@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.user.service;
 
-import com.lineyk.characterchat.domain.user.dto.SignUpRequest;
+import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;
@@ -18,7 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserResponse signUp(SignUpRequest request) {
+    public UserResponse signup(SignupRequest request) {
         User savedUser = userRepository.save(request.toEntity(passwordEncoder));
         return UserResponse.from(savedUser);
     }

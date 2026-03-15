@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public record SignUpRequest(
+public record SignupRequest(
         @NotBlank(message = "이메일을 입력해주세요.")
         @Email(message = "이메일 형식이 아닙니다.")
         String email,

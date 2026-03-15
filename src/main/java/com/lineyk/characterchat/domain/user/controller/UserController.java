@@ -1,10 +1,11 @@
 package com.lineyk.characterchat.domain.user.controller;
 
-import com.lineyk.characterchat.domain.user.dto.SignUpRequest;
+import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest request) {
-        UserResponse response = userService.signUp(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
+        UserResponse response = userService.signup(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
