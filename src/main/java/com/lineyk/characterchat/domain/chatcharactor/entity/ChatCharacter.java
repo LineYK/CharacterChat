@@ -1,4 +1,4 @@
-package com.lineyk.characterchat.domain.character.entity;
+package com.lineyk.characterchat.domain.chatcharactor.entity;
 
 
 import com.lineyk.characterchat.domain.user.entity.User;
@@ -12,15 +12,15 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "characters")
+@Table(name = "chat_characters")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Character {
+public class ChatCharacter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,19 +33,19 @@ public class Character {
     private String persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
+    @JoinColumn(name = "creator_uuid")
     @CreatedBy
     private User creator;
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDate updateAt;
+    private LocalDateTime updateAt;
 
     @Builder
-    public Character(String name, String persona, User creator) {
+    public ChatCharacter(String name, String persona, User creator) {
         this.name = name;
         this.persona = persona;
         this.creator = creator;

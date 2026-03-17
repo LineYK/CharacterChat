@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.chat.entity;
 
-import com.lineyk.characterchat.domain.character.entity.Character;
+import com.lineyk.characterchat.domain.chatcharactor.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -31,7 +31,7 @@ public class ChatRoom {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id")
-    private Character character;
+    private ChatCharacter chatCharacter;
 
     @Column(columnDefinition = "TEXT")
     private String summaryMessage;
@@ -44,8 +44,8 @@ public class ChatRoom {
     private LocalDateTime updatedAt;
 
     @Builder
-    public ChatRoom(User user, Character character) {
+    public ChatRoom(User user, ChatCharacter chatCharacter) {
         this.user = user;
-        this.character = character;
+        this.chatCharacter = chatCharacter;
     }
 }
