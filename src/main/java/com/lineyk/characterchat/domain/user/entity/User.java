@@ -9,7 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -35,15 +35,16 @@ public class User {
     @Column(nullable=false)
     private int point = 0;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     private Role role;
 
     @CreatedDate
     @Column(updatable=false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     @Builder
     public User(String email, String nickname, String password) {
