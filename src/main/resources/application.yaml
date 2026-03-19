@@ -21,3 +21,7 @@ logging:
   level:
     com.lineyk.characterchat: DEBUG
     org.hibernate.SQL: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET}
+  expireation: 3600000
