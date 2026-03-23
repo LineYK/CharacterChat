@@ -1,5 +1,7 @@
 package com.lineyk.characterchat.domain.user.controller;
 
+import com.lineyk.characterchat.domain.user.dto.LoginRequest;
+import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.service.UserService;
@@ -23,5 +25,11 @@ public class UserController {
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
         UserResponse response = userService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = userService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
