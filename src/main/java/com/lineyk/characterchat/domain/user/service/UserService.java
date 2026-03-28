@@ -7,6 +7,8 @@ import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;
 import com.lineyk.characterchat.global.auth.jwt.JwtTokenProvider;
+import com.lineyk.characterchat.global.error.CustomException;
+import com.lineyk.characterchat.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,10 +30,10 @@ public class UserService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         String accessToken = jwtTokenProvider.generateToken(user.getEmail());

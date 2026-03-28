@@ -1,7 +1,5 @@
 package com.lineyk.characterchat.global.error;
 
-import org.springframework.http.HttpStatus;
-
 public record ErrorResponse(
         String message,
         String code

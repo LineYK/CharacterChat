@@ -1,7 +1,6 @@
 package com.lineyk.characterchat.global.error;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomException extends RuntimeException {
