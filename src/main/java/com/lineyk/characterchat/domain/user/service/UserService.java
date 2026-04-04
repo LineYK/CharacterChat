@@ -25,6 +25,7 @@ public class UserService {
 
     @Transactional
     public UserResponse signup(SignupRequest request) {
+        validDuplicatedEmail(request.email());
         User savedUser = userRepository.save(request.toEntity(passwordEncoder));
         return UserResponse.from(savedUser);
     }
@@ -39,5 +40,10 @@ public class UserService {
         String accessToken = jwtTokenProvider.generateToken(user.getEmail());
 
         return LoginResponse.of(accessToken, user);
+    }
+
+    public void validDuplicatedEmail(String email) {
+        boolean isDuplicateEmail = userRepository.existsByEmail(email);
+        if (isDuplicateEmail) throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
     }
 }
