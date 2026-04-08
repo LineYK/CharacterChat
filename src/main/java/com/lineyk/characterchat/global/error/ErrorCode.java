@@ -15,7 +15,10 @@ public enum ErrorCode {
 
     // 토큰
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않는 토큰입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+
+    // 캐릯터
+    CHARACTER_NOT_FONUD(HttpStatus.NOT_FOUND, "존재하지 않는 캐릭터입니다.");
 
     private final HttpStatus status;
     private final String message;
