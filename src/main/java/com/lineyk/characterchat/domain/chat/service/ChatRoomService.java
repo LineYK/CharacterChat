@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -23,7 +25,7 @@ public class ChatRoomService {
 
     @Transactional
     public ChatRoomResponse createChatRoom(User user, ChatRoomCreateRequest request) {
-        ChatCharacter chatCharacter = chatCharacterRepository.findById(request.characterId()).orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FONUD));
+        ChatCharacter chatCharacter = chatCharacterRepository.findById(request.characterId()).orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .user(user)
@@ -33,5 +35,12 @@ public class ChatRoomService {
         chatRoomRepository.save(chatRoom);
 
         return ChatRoomResponse.from(chatRoom);
+    }
+
+    public List<ChatRoomResponse> getChatRooms(User user) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findByUserOrderByCreatedAtDesc(user);
+        return chatRooms.stream()
+                .map(ChatRoomResponse::from)
+                .toList();
     }
 }
