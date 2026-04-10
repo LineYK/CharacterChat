@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,8 @@ public class ChatRoomService {
 
     @Transactional
     public ChatRoomResponse createChatRoom(User user, ChatRoomCreateRequest request) {
-        ChatCharacter chatCharacter = chatCharacterRepository.findById(request.characterId()).orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
+        ChatCharacter chatCharacter = chatCharacterRepository.findById(request.characterId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .user(user)
@@ -43,4 +45,16 @@ public class ChatRoomService {
                 .map(ChatRoomResponse::from)
                 .toList();
     }
+
+    public ChatRoomResponse getChatRoom(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+
+        if (!chatRoom.getUser().getId().equals(user.getId()))
+            throw new CustomException(ErrorCode.CHATROOM_ACCESS_DENIED);
+
+        return ChatRoomResponse.from(chatRoom);
+    }
+
+
 }
