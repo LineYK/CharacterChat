@@ -37,8 +37,14 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> join(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getChatRoom(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         ChatRoomResponse response = chatRoomService.getChatRoom(id, userDetails.user());
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        chatRoomService.deleteChatRoom(id, userDetails.user());
+        return ResponseEntity.noContent().build();
     }
 }

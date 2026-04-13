@@ -47,14 +47,23 @@ public class ChatRoomService {
     }
 
     public ChatRoomResponse getChatRoom(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = findChatRoomWithAuth(chatRoomId, user);
+        return ChatRoomResponse.from(chatRoom);
+    }
+
+    @Transactional
+    public void deleteChatRoom(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = findChatRoomWithAuth(chatRoomId, user);
+        chatRoomRepository.delete(chatRoom);
+    }
+
+    private ChatRoom findChatRoomWithAuth(UUID chatRoomId, User user) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
         if (!chatRoom.getUser().getId().equals(user.getId()))
             throw new CustomException(ErrorCode.CHATROOM_ACCESS_DENIED);
 
-        return ChatRoomResponse.from(chatRoom);
+        return chatRoom;
     }
-
-
 }
