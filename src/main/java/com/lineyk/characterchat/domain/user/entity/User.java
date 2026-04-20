@@ -47,11 +47,11 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Builder
-    public User(String email, String nickname, String password) {
+    public User(String email, String nickname, String password, Role role) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.point = 0;
-        this.role = Role.USER;
+        this.role = role != null ? role : Role.USER;
     }
 }
