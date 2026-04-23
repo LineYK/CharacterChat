@@ -3,10 +3,12 @@ package com.lineyk.characterchat.domain.chat.controller;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.service.ChatService;
 import com.lineyk.characterchat.domain.user.entity.User;
+import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -25,9 +27,12 @@ public class ChatMessageController {
             ChatMessage request,
             Principal principal
     ) {
-        User dummy = User.builder()
-                .build();
-        ChatMessage savedMessage = chatService.sendUserMessage(chatRoomId, dummy, request.message());
+
+        UsernamePasswordAuthenticationToken auth =  (UsernamePasswordAuthenticationToken) principal;
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.user();
+
+        ChatMessage savedMessage = chatService.sendUserMessage(chatRoomId, user, request.message());
         messagingTemplate.convertAndSend("/sub/chat" + chatRoomId, savedMessage);
     }
 
