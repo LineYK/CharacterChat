@@ -41,3 +41,9 @@ out/
 .env
 .env.*
 !.env.example
+
+### WebSocket 테스트용
+src/main/resources/static/chat-test.html
+
+### Gemini
+GEMINI.md
