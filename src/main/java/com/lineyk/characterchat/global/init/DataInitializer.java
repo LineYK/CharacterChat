@@ -1,8 +1,8 @@
 package com.lineyk.characterchat.global.init;
 
 
-import com.lineyk.characterchat.domain.chatcharactor.entity.ChatCharacter;
-import com.lineyk.characterchat.domain.chatcharactor.repository.ChatCharacterRepository;
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
+import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 import com.lineyk.characterchat.domain.user.entity.Role;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;

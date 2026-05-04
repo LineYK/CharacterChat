@@ -1,7 +1,8 @@
-package com.lineyk.characterchat.domain.chatcharactor.repository;
+package com.lineyk.characterchat.domain.chatcharacter.repository;
 
-import com.lineyk.characterchat.domain.chatcharactor.entity.ChatCharacter;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 
 import java.util.UUID;
 

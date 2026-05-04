@@ -1,4 +1,4 @@
-package com.lineyk.characterchat.domain.chatcharactor.entity;
+package com.lineyk.characterchat.domain.chatcharacter.entity;
 
 
 import com.lineyk.characterchat.domain.user.entity.User;

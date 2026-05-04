@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.chat.entity;
 
-import com.lineyk.characterchat.domain.chatcharactor.entity.ChatCharacter;
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
