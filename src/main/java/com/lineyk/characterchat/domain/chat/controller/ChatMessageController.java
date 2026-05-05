@@ -23,7 +23,7 @@ public class ChatMessageController {
 
     @MessageMapping("/chat/{chatRoomId}")
     public void sendMessage(
-            @DestinationVariable UUID chatRoomId,
+            @DestinationVariable("chatRoomId") UUID chatRoomId,
             ChatMessage request,
             Principal principal
     ) {
@@ -33,7 +33,7 @@ public class ChatMessageController {
         User user = userDetails.user();
 
         ChatMessage savedMessage = chatService.sendUserMessage(chatRoomId, user, request.message());
-        messagingTemplate.convertAndSend("/sub/chat" + chatRoomId, savedMessage);
+        messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, savedMessage);
     }
 
 
