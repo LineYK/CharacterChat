@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.chat.dto;
 
+import com.lineyk.characterchat.domain.chat.entity.Chat;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 
 import java.time.LocalDateTime;
@@ -11,4 +12,12 @@ public record ChatMessage(
         Sender sender,
         LocalDateTime timestamp
 ) {
+    public static ChatMessage from(Chat chat) {
+        return new ChatMessage(
+                chat.getChatRoom().getId(),
+                chat.getMessage(),
+                chat.getSenderType(),
+                chat.getCreatedAt()
+        );
+    }
 }

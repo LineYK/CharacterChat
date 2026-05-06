@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,4 +44,17 @@ public class ChatService {
         return new ChatMessage(chatRoomId, message, Sender.USER, chat.getCreatedAt());
     }
 
+    public List<ChatMessage> getChatMessages(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+
+        if (!chatRoom.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.CHATROOM_ACCESS_DENIED);
+        }
+
+        List<Chat> chats = chatRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
+        return chats.stream()
+                .map(ChatMessage::from)
+                .toList();
+    }
 }
