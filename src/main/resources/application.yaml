@@ -6,7 +6,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -16,6 +15,13 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
         default_schema: app
+  ai:
+    google:
+      genai:
+        api-key: ${GOOGLE_API_KEY}
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.groq.com/openai/v1
 
 logging:
   level:
