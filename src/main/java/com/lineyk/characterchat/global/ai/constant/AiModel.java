@@ -1,8 +1,10 @@
 package com.lineyk.characterchat.global.ai.constant;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public enum AiModel {
     LLAMA_3_1_8B_INSTANT("llama-3.1-8b-instant", AiProvider.GROQ),
     LLAMA_4_SCOUT_17B_16E_INSTRUCT("meta-llama/llama-4-scout-17b-16e-instruct", AiProvider.GROQ),
