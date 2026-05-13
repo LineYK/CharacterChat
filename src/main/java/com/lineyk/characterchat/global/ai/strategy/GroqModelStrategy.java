@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -27,13 +28,15 @@ public class GroqModelStrategy implements AiModelStrategy {
     }
 
     @Override
-    public String chat(String model, String systemPrompt, List<AiMessage> messages) {
+    public String chat(String model, String systemPrompt, List<AiMessage> history, String userMessage) {
         List<Message> aiMessages = new ArrayList<>();
         aiMessages.add(new SystemMessage(systemPrompt));
         
-        messages.stream()
+        history.stream()
             .map(AiMessage::toSpringAiMessage)
             .forEach(aiMessages::add);
+        
+        aiMessages.add(new UserMessage(userMessage));
 
         OpenAiChatOptions options = OpenAiChatOptions.builder()
             .model(model)

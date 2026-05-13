@@ -7,5 +7,5 @@ import com.lineyk.characterchat.global.ai.dto.AiMessage;
 
 public interface AiModelStrategy {
     AiProvider provider();
-    String chat(String model, String systemPrompt, List<AiMessage> messages);
+    String chat(String model, String systemPrompt, List<AiMessage> history, String userMessage);
 }
