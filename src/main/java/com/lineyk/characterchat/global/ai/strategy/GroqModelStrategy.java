@@ -28,15 +28,13 @@ public class GroqModelStrategy implements AiModelStrategy {
     }
 
     @Override
-    public String chat(String model, String systemPrompt, List<AiMessage> history, String userMessage) {
+    public String chat(String model, String systemPrompt, List<AiMessage> messages) {
         List<Message> aiMessages = new ArrayList<>();
         aiMessages.add(new SystemMessage(systemPrompt));
         
-        history.stream()
+        messages.stream()
             .map(AiMessage::toSpringAiMessage)
             .forEach(aiMessages::add);
-        
-        aiMessages.add(new UserMessage(userMessage));
 
         OpenAiChatOptions options = OpenAiChatOptions.builder()
             .model(model)
