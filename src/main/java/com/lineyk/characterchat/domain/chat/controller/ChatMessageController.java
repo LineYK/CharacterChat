@@ -1,6 +1,8 @@
 package com.lineyk.characterchat.domain.chat.controller;
 
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
+import com.lineyk.characterchat.domain.chat.dto.ChatRequest;
+import com.lineyk.characterchat.domain.chat.service.AiChatService;
 import com.lineyk.characterchat.domain.chat.service.ChatService;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
@@ -19,12 +21,13 @@ import java.util.UUID;
 public class ChatMessageController {
 
     private final ChatService chatService;
+    private final AiChatService aiChatService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat/{chatRoomId}")
     public void sendMessage(
             @DestinationVariable("chatRoomId") UUID chatRoomId,
-            ChatMessage request,
+            ChatRequest request,
             Principal principal
     ) {
 
@@ -34,6 +37,9 @@ public class ChatMessageController {
 
         ChatMessage savedMessage = chatService.sendUserMessage(chatRoomId, user, request.message());
         messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, savedMessage);
+
+        aiChatService.processAiResponse(chatRoomId, request.model());
+
     }
 
 

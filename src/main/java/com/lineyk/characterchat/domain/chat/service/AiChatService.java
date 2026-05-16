@@ -35,7 +35,7 @@ public class AiChatService {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
-    public Chat requestAiResponse(UUID chatRoomId, AiModel aiModel) {
+    private Chat requestAiResponse(UUID chatRoomId, AiModel aiModel) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
