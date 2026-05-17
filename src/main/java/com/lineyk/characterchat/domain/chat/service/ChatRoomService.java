@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.chat.service;
 
+import com.lineyk.characterchat.domain.chat.dto.AiModelResponse;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
 import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
@@ -7,12 +8,14 @@ import com.lineyk.characterchat.domain.chat.repository.ChatRoomRepository;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 import com.lineyk.characterchat.domain.user.entity.User;
+import com.lineyk.characterchat.global.ai.constant.AiModel;
 import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,4 +69,11 @@ public class ChatRoomService {
 
         return chatRoom;
     }
+
+    public List<AiModelResponse> getAvailableAiModels() {
+        return Arrays.stream(AiModel.values())
+            .map(AiModelResponse::from)
+            .toList();
+    }
+        
 }

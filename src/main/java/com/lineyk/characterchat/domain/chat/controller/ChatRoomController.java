@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.chat.controller;
 
+import com.lineyk.characterchat.domain.chat.dto.AiModelResponse;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
@@ -20,9 +21,14 @@ import java.util.UUID;
 @RequestMapping("/api/chatrooms")
 @RequiredArgsConstructor
 public class ChatRoomController {
-
+    
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
+    
+    @GetMapping("/models")
+    public List<AiModelResponse> getAiModels() {
+        return chatRoomService.getAvailableAiModels();
+    }
 
     @PostMapping
     public ResponseEntity<?> create(
