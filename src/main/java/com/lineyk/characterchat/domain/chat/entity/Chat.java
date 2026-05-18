@@ -30,7 +30,7 @@ public class Chat {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChatRoom chatRoom;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     @Enumerated(EnumType.STRING)
