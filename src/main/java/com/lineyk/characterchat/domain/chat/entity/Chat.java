@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "chats")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Chat {
@@ -37,6 +39,10 @@ public class Chat {
     @Column(nullable = false)
     private Sender senderType;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean isProcessed = true; // AI 응답이 완료되어 클라이언트에 전송된 메시지인지 여부
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -49,5 +55,9 @@ public class Chat {
         this.chatRoom = chatRoom;
         this.message = message;
         this.senderType = senderType;
+    }
+
+    public void updateProcessed(boolean status) {
+        this.isProcessed = status;
     }
 }

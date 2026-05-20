@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.chat.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +24,9 @@ import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,7 +37,6 @@ public class AiChatService {
     private final AiModelFactory aiModelFactory;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @Transactional
     private Chat requestAiResponse(UUID chatRoomId, AiModel aiModel) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
@@ -42,7 +44,7 @@ public class AiChatService {
         String systemPrompt = chatRoom.getChatCharacter().getPersona();
 
         // 최근 10개의 채팅 메시지만 가져와서 AI 모델에 전달
-        List<Chat> chatHistory = chatRepository.findTop10ByChatRoomOrderByCreatedAtDesc(chatRoom);
+        List<Chat> chatHistory = chatRepository.findTop10ByChatRoomAndIsProcessedTrueOrderByCreatedAtDesc(chatRoom);
         Collections.reverse(chatHistory); // 시간 순서대로 정렬
 
         List<AiMessage> aiHistory = chatHistory.stream()
@@ -67,18 +69,26 @@ public class AiChatService {
 
     @Async
     @Transactional    
-    public void processAiResponse(UUID chatRoomId, AiModel aiModel) {
-        Chat aiChat = requestAiResponse(chatRoomId, aiModel);
-        String aiResponse = aiChat.getMessage();
+    public void processAiResponse(UUID userChatId, UUID chatRoomId, AiModel aiModel) {
+        try {
+            Chat aiChat = requestAiResponse(chatRoomId, aiModel);
+            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.from(aiChat));
+        } catch (Exception e) {
+            log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
 
-        ChatMessage aiChatMessage = new ChatMessage(
-            chatRoomId,
-            aiResponse,
-            Sender.CHARACTER,
-            aiChat.getCreatedAt()
-        );
+            chatRepository.findById(userChatId).ifPresent(chat -> {
+                chat.updateProcessed(false);
+            });
 
-        messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, aiChatMessage);
+            // AI 응답 처리 중 예외가 발생한 경우, 클라이언트에게 에러 메시지 전송
+            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, new ChatMessage(
+                null,
+                chatRoomId,
+                "AI 응답 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+                Sender.SYSTEM,
+                LocalDateTime.now()
+            ));
+        }
     }
 
     private AiMessage mapToAiMessage(Chat chat) {

@@ -38,7 +38,7 @@ public class ChatMessageController {
         ChatMessage savedMessage = chatService.sendUserMessage(chatRoomId, user, request.message());
         messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, savedMessage);
 
-        aiChatService.processAiResponse(chatRoomId, request.model());
+        aiChatService.processAiResponse(savedMessage.chatId(), chatRoomId, request.model());
 
     }
 

@@ -12,6 +12,6 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
 
     List<Chat> findByChatRoomOrderByCreatedAtAsc(ChatRoom chatRoom);
 
-    List<Chat> findTop10ByChatRoomOrderByCreatedAtDesc(ChatRoom chatRoom);
+    List<Chat> findTop10ByChatRoomAndIsProcessedTrueOrderByCreatedAtDesc(ChatRoom chatRoom);
     
 }

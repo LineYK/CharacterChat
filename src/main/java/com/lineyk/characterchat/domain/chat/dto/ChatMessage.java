@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ChatMessage(
+        UUID chatId,
         UUID chatRoomId,
         String message,
         Sender sender,
@@ -14,6 +15,7 @@ public record ChatMessage(
 ) {
     public static ChatMessage from(Chat chat) {
         return new ChatMessage(
+                chat.getId(),
                 chat.getChatRoom().getId(),
                 chat.getMessage(),
                 chat.getSenderType(),
