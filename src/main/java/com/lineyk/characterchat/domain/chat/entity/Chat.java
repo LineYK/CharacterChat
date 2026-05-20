@@ -18,7 +18,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "chats")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Chat {
@@ -39,7 +38,6 @@ public class Chat {
     @Column(nullable = false)
     private Sender senderType;
 
-    @Builder.Default
     @Column(nullable = false)
     private boolean isProcessed = true; // AI 응답이 완료되어 클라이언트에 전송된 메시지인지 여부
 
