@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.stereotype.Component;
 
 import com.lineyk.characterchat.global.ai.constant.AiProvider;
@@ -17,30 +17,36 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class GroqModelStrategy implements AiModelStrategy {
-
-    private final OpenAiChatModel chatModel;
+public class GoogleModelStrategy implements AiModelStrategy {
+    
+    private final GoogleGenAiChatModel chatModel;
     
     @Override
     public AiProvider provider() {
-        return AiProvider.GROQ;
+        return AiProvider.GOOGLE;
     }
 
     @Override
     public String chat(String model, String systemPrompt, List<AiMessage> messages) {
+
         List<Message> aiMessages = new ArrayList<>();
         aiMessages.add(new SystemMessage(systemPrompt));
-        
+
         messages.stream()
             .map(AiMessage::toSpringAiMessage)
             .forEach(aiMessages::add);
 
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
+        GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
             .model(model)
             .build();
-        
+            
         return chatModel.call(new Prompt(aiMessages, options))
-            .getResult().getOutput().getText();
+            .getResult()
+            .getOutput()
+            .getText();
     }
+
+
+    
 
 }
