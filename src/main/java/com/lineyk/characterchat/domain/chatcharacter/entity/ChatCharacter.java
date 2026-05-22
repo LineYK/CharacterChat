@@ -37,6 +37,9 @@ public class ChatCharacter {
     @CreatedBy
     private User creator;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -45,9 +48,10 @@ public class ChatCharacter {
     private LocalDateTime updateAt;
 
     @Builder
-    public ChatCharacter(String name, String persona, User creator) {
+    public ChatCharacter(String name, String persona, String description, User creator) {
         this.name = name;
         this.persona = persona;
+        this.description = description;
         this.creator = creator;
     }
 }

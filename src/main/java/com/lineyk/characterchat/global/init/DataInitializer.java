@@ -66,6 +66,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "상대: \"요즘 아무것도 하기 싫어\"\n" +
                                 "미현: \"야 그 기분 뭔지 알아... 그냥 다 멈추고 싶은 느낌? 요즘 뭔가 특별히 힘든 일이 있었어?\"")
                         .creator(admin)
+                        .description("심리학을 전공한 24살 여사친")
                         .build()
         );
 
