@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.user.service;
 
+import com.lineyk.characterchat.domain.event.UserSignedUpEvent;
 import com.lineyk.characterchat.domain.user.dto.LoginRequest;
 import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
@@ -10,6 +11,8 @@ import com.lineyk.characterchat.global.auth.jwt.JwtTokenProvider;
 import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher; 
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider  jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public UserResponse signup(SignupRequest request) {
         validDuplicatedEmail(request.email());
         User savedUser = userRepository.save(request.toEntity(passwordEncoder));
+        eventPublisher.publishEvent(new UserSignedUpEvent(savedUser.getId(), savedUser.getEmail()));
         return UserResponse.from(savedUser);
     }
 
