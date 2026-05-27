@@ -29,6 +29,7 @@ public enum ErrorCode {
     AI_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 AI 모델입니다."),
     
     // 지갑
+    WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "지갑이 존재하지 않습니다."),
     INSUFFICIENT_CREDITS(HttpStatus.BAD_REQUEST, "크레딧이 부족합니다.");
 
     private final HttpStatus status;

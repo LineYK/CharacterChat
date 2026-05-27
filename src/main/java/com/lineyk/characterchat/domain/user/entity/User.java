@@ -32,9 +32,6 @@ public class User {
     @Column(nullable=false)
     private String password;
 
-    @Column(nullable=false)
-    private int point = 0;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     private Role role;
@@ -51,7 +48,6 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
-        this.point = 0;
         this.role = role != null ? role : Role.USER;
     }
 }
