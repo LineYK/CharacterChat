@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,6 +43,12 @@ public class WalletTransaction {
 
     @Column(nullable = false)
     private TransactionType type;
+
+    @Column(name = "reference_id", nullable = true)
+    private UUID referenceId; // 관련된 엔티티의 ID (예: 충전이면 결제 ID, 사용이면 사용한 chat ID 등)
+
+    @Enumerated(EnumType.STRING)
+    private TransactionsStatus status; // 트랜잭션 상태 (성공, 실패 등)
 
     @CreatedBy
     @Column(nullable = false)

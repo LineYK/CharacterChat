@@ -15,6 +15,6 @@ public class WalletEventListener {
     
     @EventListener
     public void handleUserSignUpEvent(UserSignedUpEvent event) {
-        walletService.chargeWallet(event.userId());
+        walletService.createWallet(event.userId());
     }
 }

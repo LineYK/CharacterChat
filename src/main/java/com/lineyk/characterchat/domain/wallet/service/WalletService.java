@@ -27,7 +27,7 @@ public class WalletService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void chargeWallet(UUID userId) {
+    public void createWallet(UUID userId) {
         User userProxy = userRepository.getReferenceById(userId);
 
         Wallet wallet = Wallet.builder()
@@ -70,6 +70,21 @@ public class WalletService {
                 .wallet(wallet)
                 .amount(amount)
                 .type(TransactionType.CHARGE)
+                .build();
+        transactionRepository.save(tx);
+    }
+
+    @Transactional
+    public void refundCredits(User user, long amount) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+
+        wallet.charge(amount);
+
+        WalletTransaction tx = WalletTransaction.builder()
+                .wallet(wallet)
+                .amount(amount)
+                .type(TransactionType.REFUND)
                 .build();
         transactionRepository.save(tx);
     }
