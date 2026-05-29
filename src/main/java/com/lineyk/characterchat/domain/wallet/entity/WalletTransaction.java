@@ -55,9 +55,17 @@ public class WalletTransaction {
     private LocalDateTime timestamp;
 
     @Builder
-    public WalletTransaction(Wallet wallet, long amount, TransactionType type) {
+    public WalletTransaction(Wallet wallet, long amount, TransactionType type, UUID referenceId, TransactionsStatus status) {
         this.wallet = wallet;
         this.amount = amount;
         this.type = type;
+        this.referenceId = referenceId;
+        this.status = status;
+    }
+
+    public void cancel() {
+        if (this.status == TransactionsStatus.SUCCESS) {
+            this.status = TransactionsStatus.CANCELED;
+        }
     }
 }

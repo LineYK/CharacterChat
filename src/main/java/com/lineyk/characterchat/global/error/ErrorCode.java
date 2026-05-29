@@ -30,7 +30,10 @@ public enum ErrorCode {
     
     // 지갑
     WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "지갑이 존재하지 않습니다."),
-    INSUFFICIENT_CREDITS(HttpStatus.BAD_REQUEST, "크레딧이 부족합니다.");
+    INSUFFICIENT_CREDITS(HttpStatus.BAD_REQUEST, "크레딧이 부족합니다."),
+
+    // 거래
+    TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 거래입니다.");
 
     private final HttpStatus status;
     private final String message;
