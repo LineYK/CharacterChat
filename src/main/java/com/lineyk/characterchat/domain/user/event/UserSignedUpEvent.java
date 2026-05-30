@@ -1,4 +1,4 @@
-package com.lineyk.characterchat.domain.event;
+package com.lineyk.characterchat.domain.user.event;
 
 import java.util.UUID;
 

@@ -1,11 +1,11 @@
 package com.lineyk.characterchat.domain.user.service;
 
-import com.lineyk.characterchat.domain.event.UserSignedUpEvent;
 import com.lineyk.characterchat.domain.user.dto.LoginRequest;
 import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.entity.User;
+import com.lineyk.characterchat.domain.user.event.UserSignedUpEvent;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;
 import com.lineyk.characterchat.global.auth.jwt.JwtTokenProvider;
 import com.lineyk.characterchat.global.error.CustomException;
