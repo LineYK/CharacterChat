@@ -48,8 +48,8 @@ public class WalletService {
     }
 
     @Transactional
-    public void spendCredits(User user, long amount, UUID referenceId) {
-        Wallet wallet = walletRepository.findByUserIdWithLock(user.getId())
+    public void spendCredits(UUID userId, long amount, UUID referenceId) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
 
         wallet.spend(amount);
@@ -65,8 +65,8 @@ public class WalletService {
     }
 
     @Transactional
-    public void chargeCredits(User user, long amount, UUID referenceId) {
-        Wallet wallet = walletRepository.findByUserIdWithLock(user.getId())
+    public void chargeCredits(UUID userId, long amount, UUID referenceId) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
 
         wallet.charge(amount);
@@ -82,8 +82,8 @@ public class WalletService {
     }
 
     @Transactional
-    public void refundCredits(User user, long amount, UUID referenceId) {
-        Wallet wallet = walletRepository.findByUserIdWithLock(user.getId())
+    public void refundCredits(UUID userId, long amount, UUID referenceId) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
 
         wallet.charge(amount);

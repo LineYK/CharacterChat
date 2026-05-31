@@ -3,6 +3,7 @@ package com.lineyk.characterchat.domain.wallet.event;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import com.lineyk.characterchat.domain.chat.event.ChatSavedEvent;
 import com.lineyk.characterchat.domain.user.event.UserSignedUpEvent;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
 
@@ -17,5 +18,10 @@ public class WalletEventListener {
     @EventListener
     public void handleUserSignUpEvent(UserSignedUpEvent event) {
         walletService.createWallet(event.userId());
+    }
+
+    @EventListener
+    public void handleChatSavedEvent(ChatSavedEvent event) {
+        walletService.spendCredits(event.userId(), event.aiModel().getCost(), event.chatId());
     }
 }
