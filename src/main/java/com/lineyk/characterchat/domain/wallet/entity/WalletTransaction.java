@@ -3,7 +3,7 @@ package com.lineyk.characterchat.domain.wallet.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -42,6 +42,7 @@ public class WalletTransaction {
     private long amount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
     @Column(name = "reference_id", nullable = true)
@@ -50,7 +51,7 @@ public class WalletTransaction {
     @Enumerated(EnumType.STRING)
     private TransactionsStatus status; // 트랜잭션 상태 (성공, 실패 등)
 
-    @CreatedBy
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
