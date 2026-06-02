@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.user.controller;
 
+import com.lineyk.characterchat.application.SignupApplication;
 import com.lineyk.characterchat.domain.user.dto.LoginRequest;
 import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final SignupApplication signupApplication;
 
     @Operation(
         summary = "회원가입", 
@@ -30,7 +32,7 @@ public class UserController {
     )
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
-        UserResponse response = userService.signup(request);
+        UserResponse response = signupApplication.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

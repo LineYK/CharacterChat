@@ -1,15 +1,16 @@
 package com.lineyk.characterchat.global.init;
 
 
+import com.lineyk.characterchat.application.SignupApplication;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
-import com.lineyk.characterchat.domain.user.entity.Role;
+import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final ChatCharacterRepository chatCharacterRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final SignupApplication signupApplication;
 
     @Value("${admin.password}")
     private String adminPassword;
@@ -29,14 +30,16 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (userRepository.count() > 0) return;
 
-        User admin = User.builder()
-                .email("admin@chatcharacter.com")
-                .password(passwordEncoder.encode(adminPassword))
-                .role(Role.ADMIN)
-                .nickname("관리자")
-                .build();
+        SignupRequest adminSignupRequest = new SignupRequest(
+                "admin@chatcharacter.com",
+                adminPassword,
+                "관리자"
+        );
 
-        userRepository.save(admin);
+        signupApplication.signup(adminSignupRequest);
+
+        User admin = userRepository.findByEmail(adminSignupRequest.email())
+                .orElseThrow(() -> new RuntimeException("관리자 계정 생성 실패"));
 
         List<ChatCharacter> characters = List.of(
                 ChatCharacter.builder()
