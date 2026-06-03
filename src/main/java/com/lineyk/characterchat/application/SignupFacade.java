@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SignupApplication {
+public class SignupFacade {
     
     private final UserService userService;
     private final WalletService walletService;

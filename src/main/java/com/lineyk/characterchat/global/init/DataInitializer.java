@@ -1,7 +1,7 @@
 package com.lineyk.characterchat.global.init;
 
 
-import com.lineyk.characterchat.application.SignupApplication;
+import com.lineyk.characterchat.application.SignupFacade;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
@@ -21,7 +21,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final ChatCharacterRepository chatCharacterRepository;
-    private final SignupApplication signupApplication;
+    private final SignupFacade signupApplication;
 
     @Value("${admin.password}")
     private String adminPassword;

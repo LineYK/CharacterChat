@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChatApplication {
+public class ChatFacade {
     
     private final ChatService chatService;
     private final AiChatService aiService;
@@ -34,7 +34,7 @@ public class ChatApplication {
     @Transactional
     public ChatMessage sendUserMessage(ChatRequest request, UUID chatRoomId, User user) {
         ChatMessage saved = chatService.sendUserMessage(chatRoomId, user, request.message(), request.model());
-        walletService.spendCredits(user.getId(), request.model().getCost(), chatRoomId);
+        walletService.spendCredits(user.getId(), request.model().getCost(), saved.chatId());
         messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, saved);
 
         processAiResponse(saved.chatId(), chatRoomId, request.model());

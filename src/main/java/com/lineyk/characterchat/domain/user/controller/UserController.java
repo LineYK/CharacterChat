@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.user.controller;
 
-import com.lineyk.characterchat.application.SignupApplication;
+import com.lineyk.characterchat.application.SignupFacade;
 import com.lineyk.characterchat.domain.user.dto.LoginRequest;
 import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final SignupApplication signupApplication;
+    private final SignupFacade signupApplication;
 
     @Operation(
         summary = "회원가입", 
