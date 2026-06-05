@@ -64,9 +64,9 @@ public class WalletTransaction {
         this.status = status;
     }
 
-    public void cancel() {
-        if (this.status == TransactionsStatus.SUCCESS) {
-            this.status = TransactionsStatus.CANCELED;
+    public void fail() {
+        if (this.status == TransactionsStatus.PENDING) {
+            this.status = TransactionsStatus.FAILED;
         }
     }
 }

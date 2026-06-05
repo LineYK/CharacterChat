@@ -23,6 +23,7 @@ public enum ErrorCode {
     // 채팅
     CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 채팅방입니다."),
     CHATROOM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없는 채팅방입니다."),
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 채팅입니다."),
     
     // AI
     AI_PROVIDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 AI 공급자입니다."),

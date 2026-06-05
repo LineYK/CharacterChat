@@ -12,6 +12,7 @@ import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.service.AiChatService;
+import com.lineyk.characterchat.domain.chat.service.ChatService;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.ai.constant.AiModel;
 
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AiChatAsyncProcessor {
     
     private final AiChatService aiService;
+    private final ChatService chatService;
     private final WalletService walletService;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -38,8 +40,8 @@ public class AiChatAsyncProcessor {
         } catch (Exception e) {
             log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
             // AI 응답 처리 실패 시, 해당 메시지를 미처리 상태
-            aiService.markAsUnprocessed(userChatId);
-            walletService.refundCredits(userId, aiModel.getCost(), userChatId);
+            // aiService.markAsUnprocessed(userChatId);
+            // walletService.refundCredits(userId, aiModel.getCost(), userChatId);
             // AI 응답 처리 중 예외가 발생한 경우, 클라이언트에게 에러 메시지 전송
             messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, new ChatMessage(
                 null,
