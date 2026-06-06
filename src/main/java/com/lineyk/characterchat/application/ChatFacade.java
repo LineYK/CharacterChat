@@ -28,7 +28,7 @@ public class ChatFacade {
     public ChatMessage sendUserMessage(ChatRequest request, UUID chatRoomId, User user) {
         log.info("sendUserMessage thread={}", Thread.currentThread().getName());
         ChatMessage saved = chatService.sendUserMessage(chatRoomId, user, request.message(), request.model());
-        walletService.spendCredits(user.getId(), request.model().getCost(), saved.chatId());
+        walletService.reserveCredits(user.getId(), request.model().getCost(), saved.chatId());
         messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, saved);
 
         aiChatAsyncProcessor.processAiResponse(saved.chatId(), chatRoomId, user.getId(), request.model());

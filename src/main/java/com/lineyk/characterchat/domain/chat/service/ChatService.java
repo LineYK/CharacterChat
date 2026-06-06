@@ -2,6 +2,7 @@ package com.lineyk.characterchat.domain.chat.service;
 
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatProcessStatus;
 import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.event.ChatSavedEvent;
@@ -63,5 +64,19 @@ public class ChatService {
         return chats.stream()
                 .map(ChatMessage::from)
                 .toList();
+    }
+
+    @Transactional
+    public void markAsProcessed(UUID chatId) {
+        Chat chat = chatRepository.findById(chatId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
+        chat.updateProcessStatus(ChatProcessStatus.PROCESSED);
+    }
+
+    @Transactional
+    public void markAsUnprocessed(UUID chatId) {
+        Chat chat = chatRepository.findById(chatId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
+        chat.updateProcessStatus(ChatProcessStatus.UNPROCESSED);
     }
 }

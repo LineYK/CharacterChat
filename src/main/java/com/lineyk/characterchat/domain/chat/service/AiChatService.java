@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatProcessStatus;
 import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.repository.ChatRepository;
@@ -40,7 +41,7 @@ public class AiChatService {
         String systemPrompt = chatRoom.getChatCharacter().getPersona();
 
         // 최근 10개의 채팅 메시지만 가져와서 AI 모델에 전달
-        List<Chat> chatHistory = chatRepository.findTop10ByChatRoomAndIsProcessedTrueOrderByCreatedAtDesc(chatRoom);
+        List<Chat> chatHistory = chatRepository.findTop10ByChatRoomAndProcessStatusOrderByCreatedAtDesc(chatRoom, ChatProcessStatus.PROCESSED);
         Collections.reverse(chatHistory); // 시간 순서대로 정렬
 
         List<AiMessage> aiHistory = chatHistory.stream()
@@ -59,16 +60,17 @@ public class AiChatService {
             .senderType(Sender.CHARACTER)
             .message(aiResponse)
             .build();
+            
+        markAsProcessed(aiChat.getId());
         chatRepository.save(aiChat);
         return aiChat;
     }
 
-    public void markAsUnprocessed(UUID chatId) {
-        chatRepository.findById(chatId).ifPresent(chat -> {
-            chat.updateProcessed(false);
-        });
+    public void markAsProcessed(UUID chatId) {
+        Chat chat = chatRepository.findById(chatId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
+        chat.updateProcessStatus(ChatProcessStatus.PROCESSED); 
     }
-
 
     private AiMessage mapToAiMessage(Chat chat) {
         AiMessage.Role role =  (chat.getSenderType() == Sender.USER)

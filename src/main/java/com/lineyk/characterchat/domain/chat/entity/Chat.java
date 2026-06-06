@@ -38,8 +38,9 @@ public class Chat {
     @Column(nullable = false)
     private Sender senderType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean isProcessed = true; // AI 응답이 완료되어 클라이언트에 전송된 메시지인지 여부
+    private ChatProcessStatus processStatus; // AI 응답이 완료되어 클라이언트에 전송된 메시지인지 여부
 
     @CreatedDate
     @Column(updatable = false)
@@ -53,9 +54,10 @@ public class Chat {
         this.chatRoom = chatRoom;
         this.message = message;
         this.senderType = senderType;
+        this.processStatus = ChatProcessStatus.PENDING; // 기본값은 PENDING
     }
 
-    public void updateProcessed(boolean status) {
-        this.isProcessed = status;
+    public void updateProcessStatus(ChatProcessStatus status) {
+        this.processStatus = status;
     }
 }

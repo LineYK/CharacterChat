@@ -48,6 +48,29 @@ public class WalletService {
     }
 
     @Transactional
+    public WalletTransaction reserveCredits(UUID userId, long amount, UUID referenceId) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+        
+        long pendingSum = transactionRepository.sumPendingAmountByWalletIdAndType(wallet.getId(), TransactionType.USE);
+        long availableBalance = wallet.getCredits() - pendingSum;
+        
+        if (availableBalance < amount) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_CREDITS);
+        }
+
+        WalletTransaction tx = WalletTransaction.builder()
+                .wallet(wallet)
+                .amount(amount)
+                .type(TransactionType.USE)
+                .referenceId(referenceId)
+                .status(TransactionsStatus.PENDING)
+                .build();
+        transactionRepository.save(tx);
+        return tx;
+    }
+
+    @Transactional
     public void spendCredits(UUID userId, long amount, UUID referenceId) {
         Wallet wallet = walletRepository.findByUserIdWithLock(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
@@ -99,6 +122,6 @@ public class WalletService {
 
         WalletTransaction originalTx = transactionRepository.findByReferenceIdAndType(referenceId, TransactionType.USE)
                 .orElseThrow(() -> new CustomException(ErrorCode.TRANSACTION_NOT_FOUND));
-        originalTx.cancel();
+        originalTx.fail();
     }
 }
