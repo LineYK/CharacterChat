@@ -57,7 +57,11 @@ public class Chat {
         this.processStatus = ChatProcessStatus.PENDING; // 기본값은 PENDING
     }
 
-    public void updateProcessStatus(ChatProcessStatus status) {
-        this.processStatus = status;
+    public void process() {
+        this.processStatus = ChatProcessStatus.PROCESSED;
+    }
+
+    public void unprocess() {
+        this.processStatus = ChatProcessStatus.UNPROCESSED;
     }
 }

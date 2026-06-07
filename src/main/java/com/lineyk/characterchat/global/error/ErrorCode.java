@@ -34,7 +34,8 @@ public enum ErrorCode {
     INSUFFICIENT_CREDITS(HttpStatus.BAD_REQUEST, "크레딧이 부족합니다."),
 
     // 거래
-    TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 거래입니다.");
+    TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 거래입니다."),
+    INVALID_TRANSACTION_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 거래 상태입니다.");
 
     private final HttpStatus status;
     private final String message;

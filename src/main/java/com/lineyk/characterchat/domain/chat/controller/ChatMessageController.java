@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatMessageController {
 
-    private final ChatFacade chatApplication;
+    private final ChatFacade chatFacade;
 
     @MessageMapping("/chat/{chatRoomId}")
     public void sendMessage(
@@ -30,7 +30,7 @@ public class ChatMessageController {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.user();
 
-        chatApplication.sendUserMessage(request, chatRoomId, user);
+        chatFacade.sendUserMessage(request, chatRoomId, user);
     }
 
 }

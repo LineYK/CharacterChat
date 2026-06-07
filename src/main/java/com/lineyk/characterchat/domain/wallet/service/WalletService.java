@@ -71,21 +71,33 @@ public class WalletService {
     }
 
     @Transactional
-    public void spendCredits(UUID userId, long amount, UUID referenceId) {
-        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
+    public void confirmCredits(UUID referenceId) {
+        WalletTransaction tx = transactionRepository.findByReferenceIdAndType(referenceId, TransactionType.USE)
+                .orElseThrow(() -> new CustomException(ErrorCode.TRANSACTION_NOT_FOUND));
+
+        if (tx.getStatus() != TransactionsStatus.PENDING) {
+            throw new CustomException(ErrorCode.INVALID_TRANSACTION_STATUS);
+        }
+
+        Wallet wallet = walletRepository.findByIdWithLock(tx.getWallet().getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+        wallet.spend(tx.getAmount());
 
-        wallet.spend(amount);
-
-        WalletTransaction tx = WalletTransaction.builder()
-                .wallet(wallet)
-                .amount(amount)
-                .type(TransactionType.USE)
-                .referenceId(referenceId)
-                .status(TransactionsStatus.SUCCESS)
-                .build();
-        transactionRepository.save(tx);
+        tx.success();
     }
+
+    @Transactional
+    public void failCredits(UUID referenceId) {
+        WalletTransaction tx = transactionRepository.findByReferenceIdAndType(referenceId, TransactionType.USE)
+                .orElseThrow(() -> new CustomException(ErrorCode.TRANSACTION_NOT_FOUND));
+
+        if (tx.getStatus() != TransactionsStatus.PENDING) {
+            throw new CustomException(ErrorCode.INVALID_TRANSACTION_STATUS);
+        }
+
+        tx.fail();
+    }
+
 
     @Transactional
     public void chargeCredits(UUID userId, long amount, UUID referenceId) {
@@ -104,24 +116,4 @@ public class WalletService {
         transactionRepository.save(tx);
     }
 
-    @Transactional
-    public void refundCredits(UUID userId, long amount, UUID referenceId) {
-        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
-
-        wallet.charge(amount);
-
-        WalletTransaction tx = WalletTransaction.builder()
-                .wallet(wallet)
-                .amount(amount)
-                .type(TransactionType.REFUND)
-                .referenceId(referenceId)
-                .status(TransactionsStatus.SUCCESS)
-                .build();
-        transactionRepository.save(tx);
-
-        WalletTransaction originalTx = transactionRepository.findByReferenceIdAndType(referenceId, TransactionType.USE)
-                .orElseThrow(() -> new CustomException(ErrorCode.TRANSACTION_NOT_FOUND));
-        originalTx.fail();
-    }
 }

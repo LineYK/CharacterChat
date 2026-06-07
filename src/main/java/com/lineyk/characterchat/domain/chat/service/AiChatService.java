@@ -61,15 +61,9 @@ public class AiChatService {
             .message(aiResponse)
             .build();
             
-        markAsProcessed(aiChat.getId());
+        aiChat.process();
         chatRepository.save(aiChat);
         return aiChat;
-    }
-
-    public void markAsProcessed(UUID chatId) {
-        Chat chat = chatRepository.findById(chatId)
-            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
-        chat.updateProcessStatus(ChatProcessStatus.PROCESSED); 
     }
 
     private AiMessage mapToAiMessage(Chat chat) {

@@ -36,12 +36,19 @@ public class AiChatAsyncProcessor {
         try {
             log.info("processAiResponse thread={}", Thread.currentThread().getName());
             Chat aiChat = aiService.requestAiResponse(chatRoomId, aiModel);
+
+            // 사용자 메시지와 크레딧 사용 확정 처리
+            chatService.markAsProcessed(userChatId);
+            walletService.confirmCredits(userChatId);
+
             messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.from(aiChat));
         } catch (Exception e) {
             log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
-            // AI 응답 처리 실패 시, 해당 메시지를 미처리 상태
-            // aiService.markAsUnprocessed(userChatId);
-            // walletService.refundCredits(userId, aiModel.getCost(), userChatId);
+            
+            // 사용자 메시지와 크레딧 사용 실패 처리
+            chatService.markAsUnprocessed(userChatId);
+            walletService.failCredits(userChatId);
+
             // AI 응답 처리 중 예외가 발생한 경우, 클라이언트에게 에러 메시지 전송
             messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, new ChatMessage(
                 null,
