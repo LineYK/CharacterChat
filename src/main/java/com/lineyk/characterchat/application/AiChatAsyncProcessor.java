@@ -6,8 +6,6 @@ import java.util.UUID;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
@@ -31,7 +29,6 @@ public class AiChatAsyncProcessor {
 
     
     @Async
-    @Transactional
     public void processAiResponse(UUID userChatId, UUID chatRoomId, UUID userId, AiModel aiModel) {
         try {
             log.info("processAiResponse thread={}", Thread.currentThread().getName());
