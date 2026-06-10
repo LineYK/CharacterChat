@@ -32,7 +32,7 @@ public class AiChatAsyncProcessor {
     public void processAiResponse(UUID userChatId, UUID chatRoomId, UUID userId, AiModel aiModel) {
         try {
             log.info("processAiResponse thread={}", Thread.currentThread().getName());
-            Chat aiChat = aiService.requestAiResponse(chatRoomId, aiModel);
+            Chat aiChat = aiService.requestAiResponse(userChatId, chatRoomId, aiModel);
 
             // 사용자 메시지와 크레딧 사용 확정 처리
             chatService.markAsProcessed(userChatId);

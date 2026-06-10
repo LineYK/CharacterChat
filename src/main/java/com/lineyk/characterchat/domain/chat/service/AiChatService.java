@@ -34,7 +34,7 @@ public class AiChatService {
     private final AiModelFactory aiModelFactory;
 
     @Transactional
-    public Chat requestAiResponse(UUID chatRoomId, AiModel aiModel) {
+    public Chat requestAiResponse(UUID userChatId, UUID chatRoomId, AiModel aiModel) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
@@ -44,11 +44,19 @@ public class AiChatService {
         List<Chat> chatHistory = chatRepository.findTop10ByChatRoomAndProcessStatusOrderByCreatedAtDesc(chatRoom, ChatProcessStatus.PROCESSED);
         Collections.reverse(chatHistory); // 시간 순서대로 정렬
 
+        Chat userChat = chatRepository.findById(userChatId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
+
+        chatHistory.add(userChat); // 최신 사용자 메시지도 포함
+        
         List<AiMessage> aiHistory = chatHistory.stream()
             .map(this::mapToAiMessage)
             .toList();
 
         AiModelStrategy strategy = aiModelFactory.getStrategy(aiModel.getProvider());
+
+        log.info("Requesting AI response with model: {}, systemPrompt: {}, chatHistory: {}", aiModel.getModel(), systemPrompt, aiHistory);
+
         String aiResponse = strategy.chat(
             aiModel.getModel(),
             systemPrompt,
