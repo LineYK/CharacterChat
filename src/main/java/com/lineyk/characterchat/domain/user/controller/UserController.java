@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.user.controller;
 
-import com.lineyk.characterchat.application.SignupFacade;
+import com.lineyk.characterchat.application.user.SignupFacade;
 import com.lineyk.characterchat.domain.user.dto.LoginRequest;
 import com.lineyk.characterchat.domain.user.dto.LoginResponse;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;

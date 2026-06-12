@@ -1,6 +1,6 @@
 package com.lineyk.characterchat.domain.chat.controller;
 
-import com.lineyk.characterchat.application.ChatFacade;
+import com.lineyk.characterchat.application.chat.ChatFacade;
 import com.lineyk.characterchat.domain.chat.dto.ChatRequest;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;

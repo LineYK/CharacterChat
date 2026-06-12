@@ -1,4 +1,4 @@
-package com.lineyk.characterchat.application;
+package com.lineyk.characterchat.application.chat;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

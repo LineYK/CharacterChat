@@ -1,4 +1,4 @@
-package com.lineyk.characterchat.application;
+package com.lineyk.characterchat.application.chat;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

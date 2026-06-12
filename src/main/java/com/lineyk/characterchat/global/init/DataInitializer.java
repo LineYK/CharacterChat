@@ -1,7 +1,7 @@
 package com.lineyk.characterchat.global.init;
 
 
-import com.lineyk.characterchat.application.SignupFacade;
+import com.lineyk.characterchat.application.user.SignupFacade;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
