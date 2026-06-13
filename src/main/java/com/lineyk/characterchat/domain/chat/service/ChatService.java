@@ -2,6 +2,7 @@ package com.lineyk.characterchat.domain.chat.service;
 
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatProcessStatus;
 import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.repository.ChatRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,5 +74,12 @@ public class ChatService {
         Chat chat = chatRepository.findById(chatId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHAT_NOT_FOUND));
         chat.unprocess();
+    }
+
+    @Transactional
+    public void recoverPendingChats() {
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(10);
+        chatRepository.findByProcessStatusAndCreatedAtBefore(ChatProcessStatus.PENDING, cutoff)
+            .forEach(chat -> chat.unprocess());
     }
 }

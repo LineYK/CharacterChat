@@ -6,6 +6,7 @@ import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,5 +15,7 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
     List<Chat> findByChatRoomOrderByCreatedAtAsc(ChatRoom chatRoom);
 
     List<Chat> findTop10ByChatRoomAndProcessStatusOrderByCreatedAtDesc(ChatRoom chatRoom, ChatProcessStatus processStatus);
+
+    List<Chat> findByProcessStatusAndCreatedAtBefore(ChatProcessStatus processStatus, LocalDateTime cutoff);
     
 }

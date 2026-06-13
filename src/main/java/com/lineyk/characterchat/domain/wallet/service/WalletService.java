@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.wallet.service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -115,5 +116,11 @@ public class WalletService {
                 .build();
         transactionRepository.save(tx);
     }
-
+    
+    @Transactional
+    public void recoverPendingTransactions() {
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(10);
+        transactionRepository.findByStatusAndTimestampBefore(TransactionsStatus.PENDING, cutoff)
+            .forEach(tx -> tx.fail());
+    }
 }
