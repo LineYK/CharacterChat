@@ -45,7 +45,7 @@ public class ChatService {
 
         chatRepository.save(chat);
 
-        return new ChatMessage(chat.getId(), chatRoomId, message, Sender.USER, chat.getCreatedAt());
+        return ChatMessage.from(chat);
     }
 
     public List<ChatMessage> getChatMessages(UUID chatRoomId, User user) {
