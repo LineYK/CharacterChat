@@ -13,6 +13,7 @@ import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.repository.ChatRepository;
 import com.lineyk.characterchat.domain.chat.repository.ChatRoomRepository;
+import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 import com.lineyk.characterchat.global.ai.constant.AiModel;
 import com.lineyk.characterchat.global.ai.dto.AiMessage;
 import com.lineyk.characterchat.global.ai.factory.AiModelFactory;
@@ -34,11 +35,15 @@ public class AiChatService {
     private final AiModelFactory aiModelFactory;
 
     @Transactional
-    public Chat requestAiResponse(UUID userChatId, UUID chatRoomId, AiModel aiModel) {
+    public Chat requestAiResponse(UUID userChatId, UUID chatRoomId, AiModel aiModel, List<CharacterImage> images) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
         String systemPrompt = chatRoom.getChatCharacter().getPersona();
+
+        if (!images.isEmpty()) {
+            systemPrompt += "\n\n" + buildImageInstructions(images);
+        }
 
         // 최근 10개의 채팅 메시지만 가져와서 AI 모델에 전달
         List<Chat> chatHistory = chatRepository.findTop10ByChatRoomAndProcessStatusOrderByCreatedAtDesc(chatRoom, ChatProcessStatus.PROCESSED);
@@ -79,6 +84,20 @@ public class AiChatService {
             ? AiMessage.Role.USER
             : AiMessage.Role.ASSISTANT;
         return new AiMessage(role, chat.getMessage());
+    }
+
+    private String buildImageInstructions(List<CharacterImage> images) {
+        StringBuilder sb = new StringBuilder("감정이나 상황에 맞게 [img:태그] 형식을 대화 중간에 삽입해:\n");
+        sb.append("사용 가능한 태크: \n");
+        images.forEach(image -> {
+            sb.append("- [img:").append(image.getEmotionTag()).append("]");
+            if(image.getDescription() != null && !image.getDescription().isEmpty()) {
+                sb.append(" : ").append(image.getDescription());
+            }
+            sb.append("\n");
+        });
+
+        return sb.toString();
     }
 
 }
