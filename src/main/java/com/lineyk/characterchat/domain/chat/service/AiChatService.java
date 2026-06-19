@@ -88,7 +88,7 @@ public class AiChatService {
 
     private String buildImageInstructions(List<CharacterImage> images) {
         StringBuilder sb = new StringBuilder("감정이나 상황에 맞게 [img:태그] 형식을 대화 중간에 삽입해:\n");
-        sb.append("사용 가능한 태크: \n");
+        sb.append("사용 가능한 태그: \n");
         images.forEach(image -> {
             sb.append("- [img:").append(image.getEmotionTag()).append("]");
             if(image.getDescription() != null && !image.getDescription().isEmpty()) {
@@ -96,7 +96,7 @@ public class AiChatService {
             }
             sb.append("\n");
         });
-
+        sb.append("태그는 반드시 위 목록에서만 선택해야 해.");
         return sb.toString();
     }
 

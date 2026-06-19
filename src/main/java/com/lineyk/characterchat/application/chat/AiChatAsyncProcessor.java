@@ -2,11 +2,14 @@ package com.lineyk.characterchat.application.chat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
+import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.service.AiChatService;
@@ -15,6 +18,7 @@ import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.ai.constant.AiModel;
+import com.lineyk.characterchat.global.util.ImageTagParser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +47,13 @@ public class AiChatAsyncProcessor {
             chatService.markAsProcessed(userChatId);
             walletService.confirmCredits(userChatId);
 
-            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, null));
+            Map<String, String> tagToUrlMap = images.stream()
+                .collect(Collectors.toMap(CharacterImage::getEmotionTag, CharacterImage::getImageUrl, 
+                          (existing, replacement) -> existing)); // 중복 태그 처리
+
+            List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
+
+            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments));
         } catch (Exception e) {
             log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
             
