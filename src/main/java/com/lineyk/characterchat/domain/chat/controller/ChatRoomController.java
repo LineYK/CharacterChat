@@ -1,10 +1,10 @@
 package com.lineyk.characterchat.domain.chat.controller;
 
+import com.lineyk.characterchat.application.chat.ChatFacade;
 import com.lineyk.characterchat.domain.chat.dto.AiModelResponse;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
-import com.lineyk.characterchat.domain.chat.service.ChatService;
 import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class ChatRoomController {
     
     private final ChatRoomService chatRoomService;
-    private final ChatService chatService;
+    private final ChatFacade chatFacade;
     
     @GetMapping("/models")
     public List<AiModelResponse> getAiModels() {
@@ -59,7 +59,7 @@ public class ChatRoomController {
 
     @GetMapping("/{id}/messages")
     public ResponseEntity<?> getChatMessages(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<ChatMessage> messages = chatService.getChatMessages(id, userDetails.user());
+        List<ChatMessage> messages = chatFacade.getChatMessages(id, userDetails.user());
         return ResponseEntity.ok(messages);
     }
 }

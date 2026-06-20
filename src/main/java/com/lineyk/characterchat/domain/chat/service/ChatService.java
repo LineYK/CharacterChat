@@ -48,7 +48,7 @@ public class ChatService {
         return ChatMessage.from(chat);
     }
 
-    public List<ChatMessage> getChatMessages(UUID chatRoomId, User user) {
+    public List<Chat> getChatMessages(UUID chatRoomId, User user) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
             .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
@@ -56,10 +56,7 @@ public class ChatService {
             throw new CustomException(ErrorCode.CHATROOM_ACCESS_DENIED);
         }
 
-        List<Chat> chats = chatRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
-        return chats.stream()
-                .map(ChatMessage::from)
-                .toList();
+        return chatRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
     }
 
     @Transactional
