@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
+import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 
 public class ImageTagParser {
     
@@ -44,5 +46,11 @@ public class ImageTagParser {
         }
 
         return segments;
+    }
+
+    public static Map<String, String> buildTagToImageUrlMap(List<CharacterImage> images) {
+        return images.stream()
+                .collect(Collectors.toMap(CharacterImage::getEmotionTag, CharacterImage::getImageUrl,
+                        (existing, replacement) -> existing)); // 중복 태그 처리
     }
 }

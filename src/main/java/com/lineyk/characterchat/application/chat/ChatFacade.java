@@ -3,7 +3,6 @@ package com.lineyk.characterchat.application.chat;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -59,9 +58,7 @@ public class ChatFacade {
         List<Chat> chats = chatService.getChatMessages(chatRoomId, user);
 
         List<CharacterImage> images = characterImageRepository.findByChatRoomId(chatRoomId);
-        Map<String, String> tagToUrlMap = images.stream()
-                .collect(Collectors.toMap(CharacterImage::getEmotionTag, CharacterImage::getImageUrl,
-                        (existing, replacement) -> existing)); // 중복 태그 처리
+        Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
 
         return chats.stream()
                 .map(chat -> {

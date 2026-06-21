@@ -13,7 +13,7 @@ public interface CharacterImageRepository extends JpaRepository<CharacterImage, 
 
     List<CharacterImage> findByChatCharacterId(UUID chatCharacterId);
 
-    @Query("SELECT ci FROM CharacterImage ci WHERE ci.chatRoomId = " +
+    @Query("SELECT ci FROM CharacterImage ci WHERE ci.chatCharacter.id = " +
               "(SELECT cr.chatCharacter.id FROM ChatRoom cr WHERE cr.id = :chatRoomId)")
     List<CharacterImage> findByChatRoomId(@Param("chatRoomId") UUID chatRoomId);
 }

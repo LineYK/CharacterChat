@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -47,9 +46,7 @@ public class AiChatAsyncProcessor {
             chatService.markAsProcessed(userChatId);
             walletService.confirmCredits(userChatId);
 
-            Map<String, String> tagToUrlMap = images.stream()
-                .collect(Collectors.toMap(CharacterImage::getEmotionTag, CharacterImage::getImageUrl, 
-                          (existing, replacement) -> existing)); // 중복 태그 처리
+            Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
 
             List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
 
