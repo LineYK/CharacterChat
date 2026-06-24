@@ -34,3 +34,10 @@ jwt:
 
 admin:
   password: ${ADMIN_PASSWORD}
+
+
+toss:
+  payment:
+    client-key: ${TOSS_CLIENT_KEY}
+    secret-key: ${TOSS_SECRET_KEY}
+    base-url: https://api.tosspayments.com/v1
