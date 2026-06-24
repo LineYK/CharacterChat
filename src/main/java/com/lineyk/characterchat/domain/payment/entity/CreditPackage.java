@@ -34,7 +34,7 @@ public class CreditPackage {
     private int bonusCredits;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean active = true;
 
     @Column(nullable = false)
     private int sortOrder;
