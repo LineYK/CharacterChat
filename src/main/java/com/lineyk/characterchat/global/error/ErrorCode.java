@@ -40,7 +40,9 @@ public enum ErrorCode {
     // 결제
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 결제입니다."),
     INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 결제 상태입니다."),
-    PAYMENT_CONFIRM_FAILED(HttpStatus.BAD_REQUEST, "결제 확인에 실패했습니다."),;
+    INVALID_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "유효하지 않은 결제 수단입니다."),
+    PAYMENT_CONFIRM_FAILED(HttpStatus.BAD_REQUEST, "결제 확인에 실패했습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 금액이 일치하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;

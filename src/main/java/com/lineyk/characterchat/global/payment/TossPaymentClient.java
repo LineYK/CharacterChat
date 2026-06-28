@@ -22,8 +22,8 @@ public class TossPaymentClient {
     private final WebClient webClient;
 
     public TossPaymentClient(
-        @Value("${toss.secret-key}") String secretKey,
-        @Value("${toss.base-url}") String baseUrl
+        @Value("${toss.payment.secret-key}") String secretKey,
+        @Value("${toss.payment.base-url}") String baseUrl
     ) {
 
         String encodedKey = Base64.getEncoder()
