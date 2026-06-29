@@ -35,6 +35,7 @@ public class SecurityConfig {
                                     "/api/users/signup", 
                                     "/api/users/login", 
                                     "/api/characters",
+                                    "/api/payments/packages",
                                     "/error", 
                                     "/swagger-ui/**", 
                                     "/v3/api-docs/**", 
