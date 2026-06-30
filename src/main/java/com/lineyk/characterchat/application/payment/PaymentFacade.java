@@ -8,6 +8,7 @@ import com.lineyk.characterchat.domain.payment.dto.PaymentResponse;
 import com.lineyk.characterchat.domain.payment.entity.Payment;
 import com.lineyk.characterchat.domain.payment.entity.PaymentMethod;
 import com.lineyk.characterchat.domain.payment.service.PaymentService;
+import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
@@ -27,8 +28,12 @@ public class PaymentFacade {
     private final TossPaymentClient tossPaymentClient;
 
     @Transactional
-    public PaymentResponse confirmPayment(PaymentRequest request) {
+    public PaymentResponse confirmPayment(User user, PaymentRequest request) {
         Payment payment = paymentService.getPaymentByOrderId(request.orderId());
+
+        if (!payment.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.PAYMENT_ACCESS_DENIED);
+        }
 
         if (payment.getAmount() != request.amount()) {
             payment.fail("금액 불일치 요청=" + request.amount() + ", 실제 금액=" + payment.getAmount());

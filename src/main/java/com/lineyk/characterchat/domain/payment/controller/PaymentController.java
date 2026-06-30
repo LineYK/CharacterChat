@@ -21,7 +21,6 @@ import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -55,8 +54,11 @@ public class PaymentController {
     
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmPayment(@RequestBody PaymentRequest request) {
-        PaymentResponse response = paymentFacade.confirmPayment(request);
+    public ResponseEntity<?> confirmPayment(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @RequestBody PaymentRequest request
+    ) {
+        PaymentResponse response = paymentFacade.confirmPayment(userDetails.user(), request);
         return ResponseEntity.ok(response);
     }
     
