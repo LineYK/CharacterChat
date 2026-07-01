@@ -5,7 +5,10 @@ public record TossConfirmResponse(
     String orderId,
     String status,
     int totalAmount,
-    String method
+    String method,
+    EasyPay easyPay
 ) {
-    
+    public record EasyPay(
+        String provider
+    ) {}
 }

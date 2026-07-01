@@ -7,6 +7,7 @@ import com.lineyk.characterchat.domain.payment.dto.PaymentRequest;
 import com.lineyk.characterchat.domain.payment.dto.PaymentResponse;
 import com.lineyk.characterchat.domain.payment.entity.Payment;
 import com.lineyk.characterchat.domain.payment.entity.PaymentMethod;
+import com.lineyk.characterchat.domain.payment.entity.PaymentStatus;
 import com.lineyk.characterchat.domain.payment.service.PaymentService;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
@@ -14,6 +15,7 @@ import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
 import com.lineyk.characterchat.global.payment.TossPaymentClient;
 import com.lineyk.characterchat.global.payment.dto.TossConfirmResponse;
+import com.lineyk.characterchat.global.payment.dto.TossWebhookRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,7 @@ public class PaymentFacade {
 
         TossConfirmResponse response = tossPaymentClient.confirmPayment(request.paymentKey(), request.orderId(), request.amount());
 
-        PaymentMethod paymentMethod = mapToPaymentMethod(response.method());
+        PaymentMethod paymentMethod = mapToPaymentMethod(response);
         payment.completePayment(request.paymentKey(), paymentMethod);
 
         walletService.chargeCredits(
@@ -53,15 +55,37 @@ public class PaymentFacade {
 
         return PaymentResponse.from(payment);
     }
-        
-    private PaymentMethod mapToPaymentMethod(String method) {
-        return switch (method) {
-            case "Card" -> PaymentMethod.CARD;
-            case "KakaoPay" -> PaymentMethod.KAKAO_PAY;
-            case "NaverPay" -> PaymentMethod.NAVER_PAY;
-            case "TossPay" -> PaymentMethod.TOSS_PAY;
-            default -> throw new CustomException(ErrorCode.INVALID_PAYMENT_METHOD);
-        };
-    }
 
+    public void handleWebhook(TossWebhookRequest request) {
+        Payment payment = paymentService.getPaymentByOrderId(request.data().orderId());
+
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            log.info("이미 처리된 결제: orderId={}, status={}", request.data().orderId(), payment.getStatus());
+            return;
+        }
+
+        if (request.data().status().equals("DONE")) {
+            payment.completePayment(request.data().paymentKey(), PaymentMethod.CARD); // 우선 카드 결제만 처리
+            walletService.chargeCredits(
+                payment.getUser().getId(), 
+                payment.getCreditAmount(), 
+                payment.getId()
+            );
+        } else {
+            payment.fail("웹훅 상태: " + request.data().status());
+        }
+
+    }
+        
+    private PaymentMethod mapToPaymentMethod(TossConfirmResponse response) {
+        if ("간편결제".equals(response.method()) && response.easyPay() != null) {
+            return switch (response.easyPay().provider()) {
+                case "토스페이" -> PaymentMethod.TOSS_PAY;
+                case "카카오페이" -> PaymentMethod.KAKAO_PAY;
+                case "네이버페이" -> PaymentMethod.NAVER_PAY;
+                default -> PaymentMethod.CARD;
+            };
+        };
+        return PaymentMethod.CARD;
+    }
 }
