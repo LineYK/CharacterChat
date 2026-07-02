@@ -17,6 +17,7 @@ import com.lineyk.characterchat.domain.payment.dto.PaymentResponse;
 import com.lineyk.characterchat.domain.payment.entity.Payment;
 import com.lineyk.characterchat.domain.payment.service.PaymentService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
+import com.lineyk.characterchat.global.payment.dto.TossWebhookRequest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,5 +73,12 @@ public class PaymentController {
             .toList();
         return ResponseEntity.ok(history);
     }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<?> handleWebhook(@RequestBody TossWebhookRequest request) {
+        paymentFacade.handleWebhook(request);
+        return ResponseEntity.ok().build();
+    }
+    
     
 }
