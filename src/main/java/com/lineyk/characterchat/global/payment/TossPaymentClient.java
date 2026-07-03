@@ -53,4 +53,16 @@ public class TossPaymentClient {
             .bodyToMono(TossConfirmResponse.class)
             .block();            
     }
+
+    public void cancelPayment(String paymentKey, String cancelReason) {
+        webClient.post()
+            .uri("/payments/{paymentKey}/cancel", paymentKey)
+            .bodyValue(Map.of("cancelReason", cancelReason))
+            .retrieve()
+            .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                response -> response.bodyToMono(String.class)
+                    .map(errorBody -> new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED)))
+            .bodyToMono(Void.class)
+            .block(); 
+    }
 }

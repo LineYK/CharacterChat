@@ -56,4 +56,9 @@ public class PaymentService {
     public List<Payment> getPaymentsHistory(User user) {
         return paymentRepository.findByUserOrderByCreatedAtDesc(user);
     }
+
+    public Payment getPaymentById(UUID paymentId) {
+        return paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+    }
 }
