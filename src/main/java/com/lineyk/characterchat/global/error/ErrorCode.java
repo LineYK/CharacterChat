@@ -44,7 +44,8 @@ public enum ErrorCode {
     PAYMENT_CONFIRM_FAILED(HttpStatus.BAD_REQUEST, "결제 확인에 실패했습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 금액이 일치하지 않습니다."),
     PAYMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "결제에 대한 접근 권한이 없습니다."),
-    PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소에 실패했습니다.");
+    PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소에 실패했습니다."),
+    REFUND_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "환불 가능 기간이 만료되었습니다."),;
 
     private final HttpStatus status;
     private final String message;

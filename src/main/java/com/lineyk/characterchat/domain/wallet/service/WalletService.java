@@ -123,4 +123,25 @@ public class WalletService {
         transactionRepository.findByStatusAndTimestampBefore(TransactionsStatus.PENDING, cutoff)
             .forEach(tx -> tx.fail());
     }
+
+    @Transactional
+    public void deductCredits(UUID userId, long amount, UUID referenceId) {
+        Wallet wallet = walletRepository.findByUserIdWithLock(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+
+        if (wallet.getCredits() < amount) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_CREDITS);
+        }
+
+        wallet.spend(amount);
+
+        WalletTransaction tx = WalletTransaction.builder()
+                .wallet(wallet)
+                .amount(amount)
+                .type(TransactionType.REFUND)
+                .referenceId(referenceId)
+                .status(TransactionsStatus.SUCCESS)
+                .build();
+        transactionRepository.save(tx);
+    }
 }
