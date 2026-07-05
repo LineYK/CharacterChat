@@ -1,5 +1,8 @@
 package com.lineyk.characterchat.application.payment;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +59,7 @@ public class PaymentFacade {
         return PaymentResponse.from(payment);
     }
 
+    @Transactional
     public void handleWebhook(TossWebhookRequest request) {
         Payment payment = paymentService.getPaymentByOrderId(request.data().orderId());
 
@@ -87,5 +91,31 @@ public class PaymentFacade {
             };
         };
         return PaymentMethod.CARD;
+    }
+
+
+    @Transactional
+    public PaymentResponse refundPayment(UUID paymentId, User user) {
+        Payment payment = paymentService.getPaymentById(paymentId);
+
+        if (!payment.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.PAYMENT_ACCESS_DENIED);
+        }
+        if (payment.getStatus() != PaymentStatus.COMPLETED) {
+            throw new CustomException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
+        if (payment.getCompletedAt().plusDays(7).isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorCode.REFUND_PERIOD_EXPIRED);
+        } 
+
+        tossPaymentClient.cancelPayment(payment.getPaymentKey(), "사용자 환불 요청");
+        walletService.deductCredits(
+            payment.getUser().getId(), 
+            payment.getCreditAmount(), 
+            payment.getId()
+        );
+        payment.refund();
+
+        return PaymentResponse.from(payment);
     }
 }

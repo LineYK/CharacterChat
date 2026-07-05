@@ -1,11 +1,13 @@
 package com.lineyk.characterchat.domain.payment.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,6 +81,16 @@ public class PaymentController {
         paymentFacade.handleWebhook(request);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{id}/refund")
+    public ResponseEntity<?> refundPayment(
+        @PathVariable("id") UUID paymentId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        PaymentResponse response = paymentFacade.refundPayment(paymentId, userDetails.user());
+        return ResponseEntity.ok(response);
+    }
+    
     
     
 }
