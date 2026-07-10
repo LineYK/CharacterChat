@@ -36,15 +36,13 @@ public class SubscriptionService {
             .toList();
     }
 
-    public SubscriptionPlanResponse getPlanById(UUID planId) {
+    public SubscriptionPlan getPlanById(UUID planId) {
         return subscriptionPlanRepository.findById(planId)
-            .map(SubscriptionPlanResponse::from)
             .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_PLAN_NOT_FOUND));
     }
 
-    public SubscriptionResponse getActiveSubscription(User user) {
+    public Subscription getActiveSubscription(User user) {
         return subscriptionRepository.findByUserAndStatusIn(user, List.of(SubscriptionStatus.ACTIVE, SubscriptionStatus.CANCEL_SCHEDULED))
-            .map(SubscriptionResponse::from)
             .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }
 

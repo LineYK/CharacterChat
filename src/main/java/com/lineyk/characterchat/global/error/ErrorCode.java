@@ -50,7 +50,8 @@ public enum ErrorCode {
     // 구독
     SUBSCRIPTION_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 구독 플랜입니다."),
     SUBSCRIPTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 구독입니다."),
-    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 구독입니다.");
+    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 구독입니다."),
+    ALREADY_CLAIMED_TODAY(HttpStatus.BAD_REQUEST, "오늘 이미 크레딧을 받았습니다."),;
 
 
     private final HttpStatus status;
