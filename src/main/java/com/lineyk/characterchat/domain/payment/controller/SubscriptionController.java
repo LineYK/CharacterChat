@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
+
 @RestController
 @RequestMapping("/api/subscriptions")
 @RequiredArgsConstructor
@@ -33,7 +34,10 @@ public class SubscriptionController {
 
     @GetMapping("/plans")
     public ResponseEntity<?> getPlans() {
-        List<SubscriptionPlanResponse> plans = subscriptionService.getActiveSubscriptionPlans();
+        List<SubscriptionPlanResponse> plans = subscriptionService.getActiveSubscriptionPlans()
+            .stream()
+            .map(SubscriptionPlanResponse::from)
+            .toList();
 
         return ResponseEntity.ok(plans);
     }
@@ -47,5 +51,29 @@ public class SubscriptionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
+    @GetMapping("/me")
+    public ResponseEntity<?> getMySubscription(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        SubscriptionResponse response = subscriptionFacade.getSubscription(userDetails.user());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/claim")
+    public ResponseEntity<?> claimDailyCredits(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        SubscriptionResponse response = subscriptionFacade.claimDailyCredits(userDetails.user());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelSubscription(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        SubscriptionResponse response = subscriptionFacade.cancelSubscription(userDetails.user());
+        return ResponseEntity.ok(response);
+    }
+        
     
 }
