@@ -35,12 +35,13 @@ public class SubscriptionFacade {
 
         tossPaymentClient.confirmPayment(request.paymentKey(), request.orderId(), request.amount());
 
-        SubscriptionResponse subscription = subscriptionService.createSubscription(user, plan, null);
+        Subscription subscription = subscriptionService.createSubscription(user, plan, null); // TODO: billingKey 구현
 
-        walletService.chargeCredits(user.getId(), plan.getInitialCredit(), subscription.id());
-        return subscription;
+        walletService.chargeCredits(user.getId(), plan.getInitialCredit(), subscription.getId());
+        return SubscriptionResponse.from(subscription);
     }
     
+    @Transactional
     public SubscriptionResponse claimDailyCredits(User user) {
         Subscription subscription = subscriptionService.getActiveSubscription(user);
 
