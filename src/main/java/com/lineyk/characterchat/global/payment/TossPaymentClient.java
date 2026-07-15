@@ -65,4 +65,26 @@ public class TossPaymentClient {
             .bodyToMono(Void.class)
             .block(); 
     }
+
+    public TossConfirmResponse executeBillingKey(String billingKey, String orderId, String customerKey, int amount, String orderName) {
+        Map<String, Object> body = Map.of(
+            "customerKey", customerKey,
+            "orderId", orderId,
+            "amount", amount,
+            "orderName", orderName
+        );
+
+        return webClient.post()
+            .uri("/billing/{billingKey}", billingKey)
+            .bodyValue(body)
+            .retrieve()
+            .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                response -> response.bodyToMono(String.class)
+                    .map(errorBody -> {
+                        log.error("Toss Billing Error: {}", errorBody);
+                        return new CustomException(ErrorCode.PAYMENT_CONFIRM_FAILED);
+                    }))
+            .bodyToMono(TossConfirmResponse.class)
+            .block();
+    }
 }
