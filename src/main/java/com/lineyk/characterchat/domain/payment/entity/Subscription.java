@@ -100,4 +100,8 @@ public class Subscription {
         this.currentPeriodEnd = this.currentPeriodEnd.plusMonths(1);
         this.lastClaimedAt = null;
     }
+
+    public void failRenewal() {
+        this.status = SubscriptionStatus.CANCELED;
+    }
 }
