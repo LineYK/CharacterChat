@@ -59,11 +59,11 @@ public class SubscriptionService {
     }
 
     public List<Subscription> getExpiredCancelScheduled(LocalDate date) {
-        return subscriptionRepository.findByStatusAndCurrentPeriodEndBefore(SubscriptionStatus.CANCEL_SCHEDULED, date);
+        return subscriptionRepository.findByStatusAndCurrentPeriodEndLessThanEqual(SubscriptionStatus.CANCEL_SCHEDULED, date);
     }
 
     public List<Subscription> getActiveSubscriptionsToRenew(LocalDate date) {
-        return subscriptionRepository.findByStatusAndCurrentPeriodEndBefore(SubscriptionStatus.ACTIVE, date);
+        return subscriptionRepository.findByStatusAndCurrentPeriodEndLessThanEqual(SubscriptionStatus.ACTIVE, date);
     }
 
 }

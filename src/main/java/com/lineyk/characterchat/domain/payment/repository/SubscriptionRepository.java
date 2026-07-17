@@ -14,7 +14,7 @@ import com.lineyk.characterchat.domain.user.entity.User;
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
     Optional<Subscription> findByUserAndStatusIn(User user, List<SubscriptionStatus> statuses);
 
-    List<Subscription> findByStatusAndCurrentPeriodEndBefore(SubscriptionStatus status, LocalDate date);
+    List<Subscription> findByStatusAndCurrentPeriodEndLessThanEqual(SubscriptionStatus status, LocalDate date);
     
     boolean existsByUserAndStatusIn(User user, List<SubscriptionStatus> statuses);
 }
