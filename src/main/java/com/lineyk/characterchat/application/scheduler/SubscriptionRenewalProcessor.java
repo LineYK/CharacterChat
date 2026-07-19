@@ -11,7 +11,9 @@ import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.payment.TossPaymentClient;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscriptionRenewalProcessor {
@@ -31,26 +33,31 @@ public class SubscriptionRenewalProcessor {
                 sub.getSubscriptionPlan().getName() + " 구독 갱신"
             );
         } catch (Exception e) {
-            // TODO: handle exception
-            sub.failRenewal();
+            log.error("구독 갱신 결제 실패 : subscriptionId={}, userId={}", sub.getId(), sub.getUser().getId(), e);
+            applyRenewalFailure(sub);
         }
 
         try {
-            applyRenewal(sub);
+            applyRenewalSuccess(sub);
         } catch (Exception e) {
             // TODO: handle exception
-            sub.failRenewal();
+            applyRenewalFailure(sub);
         }
     }
 
     @Transactional
-    public void applyRenewal(Subscription sub) {
+    public void applyRenewalSuccess(Subscription sub) {
         sub.renew();
         walletService.chargeCredits(
             sub.getUser().getId(),
             sub.getSubscriptionPlan().getInitialCredit(),
             sub.getId()
         );
+    }
+
+    @Transactional
+    public void applyRenewalFailure(Subscription sub) {
+        sub.failRenewal();
     }
 
     public void processExpiredCancellation(List<Subscription> subscriptions) {
