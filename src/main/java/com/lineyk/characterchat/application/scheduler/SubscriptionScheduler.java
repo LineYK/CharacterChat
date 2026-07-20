@@ -16,6 +16,7 @@ public class SubscriptionScheduler {
     
     private final SubscriptionService subscriptionService;
     private final SubscriptionRenewalProcessor processor;
+    private final SubscriptionRenewalTxService txService;
 
     @Scheduled(cron = "0 1 0 * * *")
     public void processSubscriptions() {
@@ -24,7 +25,7 @@ public class SubscriptionScheduler {
 
         List<Subscription> expiredCancellations = subscriptionService.getExpiredCancelScheduled(today);
 
-        processor.processExpiredCancellation(expiredCancellations);
+        txService.processExpiredCancellation(expiredCancellations);
 
         List<Subscription> subscriptionsToRenew = subscriptionService.getActiveSubscriptionsToRenew(today);
         for (Subscription sub : subscriptionsToRenew) {
