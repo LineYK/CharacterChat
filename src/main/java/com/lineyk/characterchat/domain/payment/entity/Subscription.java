@@ -50,6 +50,9 @@ public class Subscription {
     private SubscriptionStatus status;
 
     @Column(nullable = false)
+    private int failedCount; // 결제 실패 횟수
+
+    @Column(nullable = false)
     private LocalDate currentPeriodStart;
 
     @Column(nullable = false)
@@ -96,12 +99,19 @@ public class Subscription {
     }
 
     public void renew() {
+        this.status = SubscriptionStatus.ACTIVE;
+        this.failedCount = 0;
         this.currentPeriodStart = this.currentPeriodEnd;
         this.currentPeriodEnd = this.currentPeriodEnd.plusMonths(1);
         this.lastClaimedAt = null;
     }
 
     public void failRenewal() {
-        this.status = SubscriptionStatus.CANCELED;
+        this.failedCount++;
+        if (this.failedCount >= 3) {
+            this.status = SubscriptionStatus.CANCELED;
+        } else {
+            this.status = SubscriptionStatus.SUSPENDED;
+        }
     }
 }
