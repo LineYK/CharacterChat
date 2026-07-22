@@ -30,14 +30,14 @@ public class SubscriptionRenewalProcessor {
             );
         } catch (Exception e) {
             log.error("구독 갱신 결제 실패 : subscriptionId={}, userId={}", sub.getId(), sub.getUser().getId(), e);
-            renewalTxService.failRenewal(sub);
+            renewalTxService.failRenewal(sub.getId());
             return;
         }
 
         try {
-            renewalTxService.completeRenewal(sub);
+            renewalTxService.completeRenewal(sub.getId());
         } catch (Exception e) {
-            // TODO: handle exception
+            log.error(" (결제완료) 구독 갱신 DB 반영 실패 : subscriptionId={}, orderId={}", sub.getId(), newOrderId, e);
         }
     }
 

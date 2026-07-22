@@ -23,9 +23,7 @@ public class SubscriptionScheduler {
         LocalDate today = LocalDate.now();
         log.info("구독 스케줄러 실행 : {}", today);
 
-        List<Subscription> expiredCancellations = subscriptionService.getExpiredCancelScheduled(today);
-
-        txService.processExpiredCancellation(expiredCancellations);
+        txService.processExpiredCancellation(today);
 
         List<Subscription> subscriptionsToRenew = subscriptionService.getActiveSubscriptionsToRenew(today);
         for (Subscription sub : subscriptionsToRenew) {

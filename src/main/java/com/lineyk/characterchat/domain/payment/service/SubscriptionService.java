@@ -66,4 +66,9 @@ public class SubscriptionService {
         return subscriptionRepository.findByStatusInAndCurrentPeriodEndLessThanEqual(List.of(SubscriptionStatus.ACTIVE, SubscriptionStatus.SUSPENDED), date);
     }
 
+    public Subscription getSubscriptionById(UUID subscriptionId) {
+        return subscriptionRepository.findById(subscriptionId)
+            .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+    }
+
 }
