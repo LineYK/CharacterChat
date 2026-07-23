@@ -42,6 +42,10 @@ public class Chat {
     @Column(nullable = false)
     private ChatProcessStatus processStatus; // AI 응답이 완료되어 클라이언트에 전송된 메시지인지 여부
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChatMode mode; // 채팅 모드 (일반 채팅, 데이팅 등)
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

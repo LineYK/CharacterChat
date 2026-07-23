@@ -36,12 +36,34 @@ public class ChatRoom {
     @Column(columnDefinition = "TEXT")
     private String summaryMessage;
 
+    @Column(nullable = false)
+    private long affinityScore = 0;
+
+    @Column(nullable = false)
+    private int datingCount = 0;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void increaseAffinity() {
+        this.affinityScore++;
+    }
+
+    public void increaseDatingCount() {
+        this.datingCount++;
+    }
+
+    public long getNextThreshold() {
+        return (this.datingCount + 1) * 10L; 
+    }
+
+    public boolean isDatingAvailable() {
+        return this.affinityScore >= getNextThreshold();
+    }
 
     @Builder
     public ChatRoom(User user, ChatCharacter chatCharacter) {
