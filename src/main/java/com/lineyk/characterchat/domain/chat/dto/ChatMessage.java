@@ -1,6 +1,7 @@
 package com.lineyk.characterchat.domain.chat.dto;
 
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatMode;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,10 @@ public record ChatMessage(
         String message,
         Sender sender,
         LocalDateTime timestamp,
-        List<MessageSegment> segments
+        List<MessageSegment> segments,
+        ChatMode mode,
+        EmotionData emotion,
+        AffinityData affinity
 ) {
     public static ChatMessage from(Chat chat) {
         return new ChatMessage(
@@ -22,6 +26,9 @@ public record ChatMessage(
                 chat.getMessage(),
                 chat.getSenderType(),
                 chat.getCreatedAt(),
+                null,
+                chat.getMode(),
+                null,
                 null
         );
     }
@@ -33,7 +40,10 @@ public record ChatMessage(
                 chat.getMessage(),
                 chat.getSenderType(),
                 chat.getCreatedAt(),
-                segments
+                segments,
+                chat.getMode(),
+                null,
+                null
         );
     }
 }

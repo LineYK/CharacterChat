@@ -40,6 +40,11 @@ public class ChatCharacter {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private String vrmModelUrl;
+
+    @Column(nullable = false)
+    private boolean datingEnabled = false;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

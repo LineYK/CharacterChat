@@ -59,6 +59,7 @@ public class Chat {
         this.message = message;
         this.senderType = senderType;
         this.processStatus = ChatProcessStatus.PENDING; // 기본값은 PENDING
+        this.mode = ChatMode.CHAT; // 기본값은 일반 채팅
     }
 
     public void process() {
