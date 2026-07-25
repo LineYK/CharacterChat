@@ -79,4 +79,14 @@ public class ChatService {
         chatRepository.findByProcessStatusAndCreatedAtBefore(ChatProcessStatus.PENDING, cutoff)
             .forEach(chat -> chat.unprocess());
     }
+
+    
+    @Transactional
+    public void increaseAffinity(UUID chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+
+        chatRoom.increaseAffinity();
+    }
+        
 }

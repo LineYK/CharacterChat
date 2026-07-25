@@ -46,6 +46,8 @@ public class AiChatAsyncProcessor {
             chatService.markAsProcessed(userChatId);
             walletService.confirmCredits(userChatId);
 
+            chatService.increaseAffinity(chatRoomId);
+
             Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
 
             List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);

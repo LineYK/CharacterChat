@@ -60,7 +60,7 @@ public class ChatRoomService {
         chatRoomRepository.delete(chatRoom);
     }
 
-    private ChatRoom findChatRoomWithAuth(UUID chatRoomId, User user) {
+    public ChatRoom findChatRoomWithAuth(UUID chatRoomId, User user) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 

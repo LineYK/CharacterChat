@@ -10,13 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
+import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRequest;
 import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
 import com.lineyk.characterchat.domain.chat.event.ChatSavedEvent;
+import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.domain.chat.service.ChatService;
 import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
@@ -32,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatFacade {
 
     private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
     private final WalletService walletService;
     private final CharacterImageRepository characterImageRepository;
 
@@ -68,6 +73,19 @@ public class ChatFacade {
                     }
                     return ChatMessage.from(chat);
                 }).toList();
+    }
+
+    public AffinityData getAffinity(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = chatRoomService.findChatRoomWithAuth(chatRoomId, user);
+        ChatCharacter chatCharacter = chatRoom.getChatCharacter();
+
+        boolean datingAvailable = chatCharacter.isDatingEnabled() && chatRoom.isDatingAvailable();
+
+        return new AffinityData(
+            chatRoom.getAffinityScore(), 
+            chatRoom.getNextThreshold(), 
+            datingAvailable
+        );
     }
 
 }
