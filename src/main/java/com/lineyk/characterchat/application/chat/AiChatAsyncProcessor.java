@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
@@ -46,13 +48,13 @@ public class AiChatAsyncProcessor {
             chatService.markAsProcessed(userChatId);
             walletService.confirmCredits(userChatId);
 
-            chatService.increaseAffinity(chatRoomId);
+            AffinityData affinity = chatService.increaseAffinityGet(chatRoomId);
 
             Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
 
             List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
 
-            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments));
+            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments, affinity));
         } catch (Exception e) {
             log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
             

@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.domain.chat.service;
 
+import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
 import com.lineyk.characterchat.domain.chat.entity.ChatProcessStatus;
@@ -7,6 +8,7 @@ import com.lineyk.characterchat.domain.chat.entity.ChatRoom;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.repository.ChatRepository;
 import com.lineyk.characterchat.domain.chat.repository.ChatRoomRepository;
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.global.ai.constant.AiModel;
 import com.lineyk.characterchat.global.error.CustomException;
@@ -82,11 +84,20 @@ public class ChatService {
 
     
     @Transactional
-    public void increaseAffinity(UUID chatRoomId) {
+    public AffinityData increaseAffinityGet(UUID chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
         chatRoom.increaseAffinity();
+
+        ChatCharacter chatCharacter = chatRoom.getChatCharacter();
+        boolean datingAvailable = chatCharacter.isDatingEnabled() && chatRoom.isDatingAvailable();
+
+        return new AffinityData(
+            chatRoom.getAffinityScore(), 
+            chatRoom.getNextThreshold(), 
+            datingAvailable
+        );
     }
         
 }
