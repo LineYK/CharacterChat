@@ -1,6 +1,7 @@
 package com.lineyk.characterchat.domain.chat.controller;
 
 import com.lineyk.characterchat.application.chat.ChatFacade;
+import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.AiModelResponse;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
@@ -9,6 +10,7 @@ import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @RestController
 @RequestMapping("/api/chatrooms")
@@ -62,4 +69,32 @@ public class ChatRoomController {
         List<ChatMessage> messages = chatFacade.getChatMessages(id, userDetails.user());
         return ResponseEntity.ok(messages);
     }
+
+    @GetMapping("{id}/affinity")
+    public ResponseEntity<?> getAffinity(
+        @PathVariable UUID id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        AffinityData affinityData = chatFacade.getAffinity(id, userDetails.user());
+        return ResponseEntity.ok(affinityData);
+    }
+    
+    @PostMapping("{id}/dating/start")
+    public ResponseEntity<?> startDating(
+        @PathVariable UUID id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        chatFacade.startDating(id, userDetails.user());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("{id}/dating/end")
+    public ResponseEntity<?> endDating(
+        @PathVariable UUID id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        chatFacade.endDating(id, userDetails.user());
+        return ResponseEntity.ok().build();
+    }
+    
 }

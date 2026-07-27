@@ -42,6 +42,10 @@ public class ChatRoom {
     @Column(nullable = false)
     private int datingCount = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChatMode currentMode = ChatMode.DATING;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -53,16 +57,25 @@ public class ChatRoom {
         this.affinityScore++;
     }
 
-    public void increaseDatingCount() {
-        this.datingCount++;
-    }
-
     public long getNextThreshold() {
         return (this.datingCount + 1) * 10L; 
     }
 
     public boolean isDatingAvailable() {
         return this.affinityScore >= getNextThreshold();
+    }
+    
+    public void startDating() {
+        this.currentMode = ChatMode.DATING;
+        this.datingCount++;
+    }
+
+    public void endDating() {
+        this.currentMode = ChatMode.CHAT;
+    }
+
+    public boolean isDating() {
+        return this.currentMode == ChatMode.DATING;
     }
 
     @Builder

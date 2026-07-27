@@ -24,6 +24,8 @@ import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
+import com.lineyk.characterchat.global.error.CustomException;
+import com.lineyk.characterchat.global.error.ErrorCode;
 import com.lineyk.characterchat.global.util.ImageTagParser;
 
 import lombok.RequiredArgsConstructor;
@@ -86,6 +88,22 @@ public class ChatFacade {
             chatRoom.getNextThreshold(), 
             datingAvailable
         );
+    }
+
+    @Transactional
+    public void startDating(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = chatRoomService.findChatRoomWithAuth(chatRoomId, user);
+        ChatCharacter chatCharacter = chatRoom.getChatCharacter();
+        if (!chatCharacter.isDatingEnabled() || !chatRoom.isDatingAvailable()) {
+            throw new CustomException(ErrorCode.DATING_NOT_AVAILABLE);
+        }
+        chatRoom.startDating();
+    }
+
+    @Transactional
+    public void endDating(UUID chatRoomId, User user) {
+        ChatRoom chatRoom = chatRoomService.findChatRoomWithAuth(chatRoomId, user);
+        chatRoom.endDating();
     }
 
 }
