@@ -43,6 +43,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .message(message)
                 .senderType(Sender.USER)
+                .mode(chatRoom.getCurrentMode())
                 .build();
 
         chatRepository.save(chat);

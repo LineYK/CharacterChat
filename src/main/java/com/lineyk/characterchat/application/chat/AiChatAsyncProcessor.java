@@ -1,5 +1,6 @@
 package com.lineyk.characterchat.application.chat;
 
+import com.lineyk.characterchat.global.util.EmotionTagParser.EmotionParsedResult;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
+import com.lineyk.characterchat.domain.chat.dto.EmotionData;
 import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
 import com.lineyk.characterchat.domain.chat.entity.Chat;
+import com.lineyk.characterchat.domain.chat.entity.ChatMode;
 import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.service.AiChatService;
 import com.lineyk.characterchat.domain.chat.service.ChatService;
@@ -19,6 +22,7 @@ import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.ai.constant.AiModel;
+import com.lineyk.characterchat.global.util.EmotionTagParser;
 import com.lineyk.characterchat.global.util.ImageTagParser;
 
 import lombok.RequiredArgsConstructor;
@@ -54,7 +58,13 @@ public class AiChatAsyncProcessor {
 
             List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
 
-            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments, affinity));
+            EmotionData emotion = null;
+            if (aiChat.getMode() == ChatMode.DATING) {
+                EmotionParsedResult result = EmotionTagParser.parse(aiChat.getMessage());
+                emotion = result.emotion();
+            }
+
+            messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments, emotion, affinity));
         } catch (Exception e) {
             log.error("AI 응답 처리 중 해당 방({}) 오류 발생: {}", chatRoomId, e.getMessage(), e);
             

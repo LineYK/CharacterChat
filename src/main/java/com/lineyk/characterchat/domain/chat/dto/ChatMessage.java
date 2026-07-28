@@ -60,4 +60,18 @@ public record ChatMessage(
                 affinity
         );
     }
+
+    public static ChatMessage fromAi(Chat chat, List<MessageSegment> segments, EmotionData emotion, AffinityData affinity) {
+        return new ChatMessage(
+                chat.getId(),
+                chat.getChatRoom().getId(),
+                chat.getMessage(),
+                chat.getSenderType(),
+                chat.getCreatedAt(),
+                segments,
+                chat.getMode(),
+                emotion,
+                affinity
+        );
+    }
 }

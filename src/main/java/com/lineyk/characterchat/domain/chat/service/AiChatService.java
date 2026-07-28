@@ -41,6 +41,14 @@ public class AiChatService {
 
         String systemPrompt = chatRoom.getChatCharacter().getPersona();
 
+        if (chatRoom.isDating()) {
+            systemPrompt += "\n\n[Dating Mode] 현재 채팅은 데이팅 모드입니다. "
+                + "야외에서 만나 데이트를 하는 상황을 상상하며 대화에 임해주세요. "
+                + "응답 마지막에 반드시 [emotion:태그:강도] 형식으로 감정 태그를 삽입해주세요. "
+                + "사용 가능한 감정 태그: happy, sad, angry, surprised, neutral, love. "
+                + "강도는 0.0~1.0 사이 값으로.";
+        }
+
         if (!images.isEmpty()) {
             systemPrompt += "\n\n" + buildImageInstructions(images);
         }
@@ -72,6 +80,7 @@ public class AiChatService {
             .chatRoom(chatRoom)
             .senderType(Sender.CHARACTER)
             .message(aiResponse)
+            .mode(chatRoom.getCurrentMode())
             .build();
             
         aiChat.process();

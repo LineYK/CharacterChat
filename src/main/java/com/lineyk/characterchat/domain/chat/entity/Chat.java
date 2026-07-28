@@ -54,12 +54,12 @@ public class Chat {
     private LocalDateTime lastModified;
 
     @Builder
-    public Chat(ChatRoom chatRoom, String message, Sender senderType) {
+    public Chat(ChatRoom chatRoom, String message, Sender senderType, ChatMode mode) {
         this.chatRoom = chatRoom;
         this.message = message;
         this.senderType = senderType;
         this.processStatus = ChatProcessStatus.PENDING; // 기본값은 PENDING
-        this.mode = ChatMode.CHAT; // 기본값은 일반 채팅
+        this.mode = (mode != null) ? mode : ChatMode.CHAT; // 기본값은 일반 채팅
     }
 
     public void process() {
