@@ -47,10 +47,10 @@ public class AiChatService {
                 + "응답 마지막에 반드시 [emotion:태그:강도] 형식으로 감정 태그를 삽입해주세요. "
                 + "사용 가능한 감정 태그: happy, sad, angry, surprised, neutral, love. "
                 + "강도는 0.0~1.0 사이 값으로.";
-        }
-
-        if (!images.isEmpty()) {
-            systemPrompt += "\n\n" + buildImageInstructions(images);
+        } else {
+            if (!images.isEmpty()) {
+                systemPrompt += "\n\n" + buildImageInstructions(images);
+            }
         }
 
         // 최근 10개의 채팅 메시지만 가져와서 AI 모델에 전달
@@ -96,7 +96,7 @@ public class AiChatService {
     }
 
     private String buildImageInstructions(List<CharacterImage> images) {
-        StringBuilder sb = new StringBuilder("감정이나 상황에 맞게 [img:태그] 형식을 대화 중간에 삽입해:\n");
+        StringBuilder sb = new StringBuilder("[채팅모드] 감정이나 상황에 맞게 [img:태그] 형식을 대화 중간에 삽입해:\n");
         sb.append("사용 가능한 태그: \n");
         images.forEach(image -> {
             sb.append("- [img:").append(image.getEmotionTag()).append("]");

@@ -54,14 +54,15 @@ public class AiChatAsyncProcessor {
 
             AffinityData affinity = chatService.increaseAffinityGet(chatRoomId);
 
-            Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
-
-            List<MessageSegment> segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
-
+            List<MessageSegment> segments = null;
             EmotionData emotion = null;
+            
             if (aiChat.getMode() == ChatMode.DATING) {
                 EmotionParsedResult result = EmotionTagParser.parse(aiChat.getMessage());
                 emotion = result.emotion();
+            } else if (aiChat.getMode() == ChatMode.CHAT) {
+                Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
+                segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
             }
 
             messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments, emotion, affinity));

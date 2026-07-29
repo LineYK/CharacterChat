@@ -44,7 +44,7 @@ public class ChatRoom {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ChatMode currentMode = ChatMode.DATING;
+    private ChatMode currentMode = ChatMode.CHAT;
 
     @CreatedDate
     @Column(updatable = false)

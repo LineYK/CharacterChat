@@ -70,7 +70,7 @@ public class ChatRoomController {
         return ResponseEntity.ok(messages);
     }
 
-    @GetMapping("{id}/affinity")
+    @GetMapping("/{id}/affinity")
     public ResponseEntity<?> getAffinity(
         @PathVariable UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -79,7 +79,7 @@ public class ChatRoomController {
         return ResponseEntity.ok(affinityData);
     }
     
-    @PostMapping("{id}/dating/start")
+    @PostMapping("/{id}/dating/start")
     public ResponseEntity<?> startDating(
         @PathVariable UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -88,7 +88,7 @@ public class ChatRoomController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("{id}/dating/end")
+    @PostMapping("/{id}/dating/end")
     public ResponseEntity<?> endDating(
         @PathVariable UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
