@@ -9,19 +9,17 @@ public class EmotionTagParser {
     
     private static final Pattern EMOTION_PATTERN = Pattern.compile("\\[emotion:(\\w+):([\\d.]+)]");
 
-    public static EmotionParsedResult parse(String message) {
+    public static EmotionData parse(String message) {
         Matcher matcher = EMOTION_PATTERN.matcher(message);
         if (matcher.find()) {
+            String cleanedMessage = matcher.replaceAll("").trim();
             EmotionData emotion = new EmotionData(
                 matcher.group(1), // 감정: happy, sad, angry, surprised, neutral, love
-                Double.parseDouble(matcher.group(2)) // 강도: 0.0~1.0
+                Double.parseDouble(matcher.group(2)),
+                cleanedMessage
             );
-            String cleanedMessage = matcher.replaceAll("").trim();
-            return new EmotionParsedResult(cleanedMessage, emotion);
+            return emotion;
         }
-        return new EmotionParsedResult(message, null);
+        return new EmotionData(null, 0.0, message); // 감정 태그가 없으면 기본값 반환
     }
-
-    public record EmotionParsedResult(String message, EmotionData emotion) {}    
-
 }

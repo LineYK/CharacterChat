@@ -1,6 +1,5 @@
 package com.lineyk.characterchat.application.chat;
 
-import com.lineyk.characterchat.global.util.EmotionTagParser.EmotionParsedResult;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +57,7 @@ public class AiChatAsyncProcessor {
             EmotionData emotion = null;
             
             if (aiChat.getMode() == ChatMode.DATING) {
-                EmotionParsedResult result = EmotionTagParser.parse(aiChat.getMessage());
-                emotion = result.emotion();
+                emotion = EmotionTagParser.parse(aiChat.getMessage());
             } else if (aiChat.getMode() == ChatMode.CHAT) {
                 Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
                 segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
