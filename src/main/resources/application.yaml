@@ -22,6 +22,10 @@ spring:
     openai:
       api-key: ${GROQ_API_KEY}
       base-url: https://api.groq.com/openai
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 logging:
   level:
@@ -41,3 +45,6 @@ toss:
     client-key: ${TOSS_CLIENT_KEY}
     secret-key: ${TOSS_SECRET_KEY}
     base-url: https://api.tosspayments.com/v1
+
+file:
+  upload-dir : ${FILE_UPLOAD_DIR}
