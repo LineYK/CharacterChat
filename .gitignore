@@ -48,3 +48,6 @@ src/main/resources/static/chat-test.html
 ### Gemini
 GEMINI.md
 .gemini/
+
+# Local file storage
+uploads/

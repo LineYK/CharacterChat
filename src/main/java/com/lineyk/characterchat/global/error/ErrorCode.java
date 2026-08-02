@@ -55,8 +55,11 @@ public enum ErrorCode {
     SUBSCRIPTION_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "이미 구독 취소가 예약되었습니다."),
     
     // 데이트
-    DATING_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "데이트를 시작할 수 없는 상태입니다.");
+    DATING_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "데이트를 시작할 수 없는 상태입니다."),
 
+
+    // File Storage
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;

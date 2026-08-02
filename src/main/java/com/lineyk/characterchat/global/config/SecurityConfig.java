@@ -38,6 +38,7 @@ public class SecurityConfig {
                                     "/api/payments/packages",
                                     "/api/payments/webhook",
                                     "/api/subscriptions/plans",
+                                    "/uploads/**",
                                     "/error", 
                                     "/swagger-ui/**", 
                                     "/v3/api-docs/**", 
