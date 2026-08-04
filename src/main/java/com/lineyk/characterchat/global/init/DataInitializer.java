@@ -1,8 +1,9 @@
 package com.lineyk.characterchat.global.init;
 
-
 import com.lineyk.characterchat.application.user.SignupFacade;
+import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
+import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.entity.User;
@@ -11,9 +12,19 @@ import com.lineyk.characterchat.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -21,25 +32,36 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final ChatCharacterRepository chatCharacterRepository;
+    private final CharacterImageRepository characterImageRepository;
+
     private final SignupFacade signupApplication;
 
     @Value("${admin.password}")
     private String adminPassword;
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.count() > 0) return;
+        if (userRepository.count() > 0)
+            return;
 
         SignupRequest adminSignupRequest = new SignupRequest(
                 "admin@chatcharacter.com",
                 adminPassword,
-                "관리자"
-        );
+                "관리자");
 
         signupApplication.signup(adminSignupRequest);
 
         User admin = userRepository.findByEmail(adminSignupRequest.email())
                 .orElseThrow(() -> new RuntimeException("관리자 계정 생성 실패"));
+
+        Map<String, String> mihyunImages = copySeedFiles(
+            "mihyun", 
+            List.of("profile.png", "happy.png", "sad.png", "love.png", "angry.png", "neutral.png")
+        );
+        String mihyunVrm = copySeedFile("mihyun", "mihyun.vrm", "vrm");
 
         List<ChatCharacter> characters = List.of(
                 ChatCharacter.builder()
@@ -70,9 +92,71 @@ public class DataInitializer implements CommandLineRunner {
                                 "미현: \"야 그 기분 뭔지 알아... 그냥 다 멈추고 싶은 느낌? 요즘 뭔가 특별히 힘든 일이 있었어?\"")
                         .creator(admin)
                         .description("심리학을 전공한 24살 여사친")
+                        .vrmModelUrl(mihyunVrm)
+                        .build());
+
+        chatCharacterRepository.saveAll(characters);
+
+        List<CharacterImage> images = List.of(
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
+                        .emotionTag("happy")
+                        .imageUrl(mihyunImages.get("happy.png"))
+                        .description("밝게 웃는 표정")
+                        .build(),
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
+                        .emotionTag("sad")
+                        .imageUrl(mihyunImages.get("sad.png"))
+                        .description("슬퍼하는 표정")
+                        .build(),
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
+                        .emotionTag ("love")
+                        .imageUrl(mihyunImages.get("love.png"))
+                        .description("사랑스러운 표정")
+                        .build(),
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
+                        .emotionTag("angry")
+                        .imageUrl(mihyunImages.get("angry.png"))
+                        .description("화난 표정")
+                        .build(),
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
+                        .emotionTag ("neutral")
+                        .imageUrl(mihyunImages.get("neutral.png"))
+                        .description("중립적인 표정")
                         .build()
         );
 
-        chatCharacterRepository.saveAll(characters);
+        characterImageRepository.saveAll(images);
+    }
+
+    private String copySeedFile(String characterName, String fileName, String directory) throws IOException {
+        ClassPathResource resource = new ClassPathResource("seed/characters/" + characterName + "/" + fileName);
+
+        // 디렉토리 생성
+        Path targetDir = Paths.get(uploadDir, directory);
+        Files.createDirectories(targetDir);
+
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        String storedName = UUID.randomUUID() + extension;
+        Path targetPath = targetDir.resolve(storedName);
+
+        try (InputStream is = resource.getInputStream()) {
+            Files.copy(is, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        return "/uploads/" + directory + "/" + storedName;
+    }
+
+    private Map<String, String> copySeedFiles(String characterName, List<String> fileNames) throws IOException {
+        Map<String, String> urlMap = new HashMap<>();
+        for (String fileName : fileNames) {
+            String url = copySeedFile(characterName, fileName, "emotions");
+            urlMap.put(fileName, url);
+        }
+        return urlMap;
     }
 }

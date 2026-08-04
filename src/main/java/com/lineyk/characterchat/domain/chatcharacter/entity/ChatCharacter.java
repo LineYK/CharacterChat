@@ -53,10 +53,11 @@ public class ChatCharacter {
     private LocalDateTime updateAt;
 
     @Builder
-    public ChatCharacter(String name, String persona, String description, User creator) {
+    public ChatCharacter(String name, String persona, String description, User creator, String vrmModelUrl) {
         this.name = name;
         this.persona = persona;
         this.description = description;
         this.creator = creator;
+        this.vrmModelUrl = vrmModelUrl;
     }
 }
