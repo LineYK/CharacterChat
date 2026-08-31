@@ -100,6 +100,12 @@ public class DataInitializer implements CommandLineRunner {
         List<CharacterImage> images = List.of(
                 CharacterImage.builder()
                         .chatCharacter(characters.get(0))
+                        .emotionTag("profile")
+                        .imageUrl(mihyunImages.get("profile.png"))
+                        .description("프로필 이미지")
+                        .build(),
+                CharacterImage.builder()
+                        .chatCharacter(characters.get(0))
                         .emotionTag("happy")
                         .imageUrl(mihyunImages.get("happy.png"))
                         .description("밝게 웃는 표정")

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.lineyk.characterchat.domain.wallet.entity.TransactionType;
 import com.lineyk.characterchat.domain.wallet.entity.TransactionsStatus;
@@ -17,7 +18,7 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
     Optional<WalletTransaction> findByReferenceIdAndType(UUID referenceId, TransactionType type);
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM WalletTransaction t WHERE t.wallet.id = :walletId AND t.type = :type AND t.status = 'PENDING'")
-    Long sumPendingAmountByWalletIdAndType(UUID walletId, TransactionType type);
+    Long sumPendingAmountByWalletIdAndType(@Param("walletId") UUID walletId, @Param("type") TransactionType type);
     
     List<WalletTransaction> findByStatusAndTimestampBefore(TransactionsStatus status, LocalDateTime cutoff);
 
