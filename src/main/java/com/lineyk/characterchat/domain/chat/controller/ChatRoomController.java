@@ -8,6 +8,11 @@ import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
 import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -18,9 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -38,41 +40,47 @@ public class ChatRoomController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(
+    public ResponseEntity<?> findOrCreate(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody ChatRoomCreateRequest request
             ) {
-        ChatRoomResponse response = chatRoomService.createChatRoom(userDetails.user(), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        ChatRoomResponse response = chatRoomService.findOrCreateChatRoom(userDetails.user(), request);
+        return response.isCreated() ? ResponseEntity.status(HttpStatus.CREATED).body(response) : ResponseEntity.ok(response);
     }
 
+    @Operation(responses = {
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ChatRoomResponse.class)))
+    })
     @GetMapping
     public ResponseEntity<?> getChatRooms(@AuthenticationPrincipal CustomUserDetails userDetails) {
         List<ChatRoomResponse> chatRooms = chatRoomService.getChatRooms(userDetails.user());
         return ResponseEntity.ok(chatRooms);
     }
 
+    @Operation(responses = {
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ChatRoomResponse.class)))
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getChatRoom(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getChatRoom(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         ChatRoomResponse response = chatRoomService.getChatRoom(id, userDetails.user());
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> delete(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         chatRoomService.deleteChatRoom(id, userDetails.user());
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/messages")
-    public ResponseEntity<?> getChatMessages(@PathVariable UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getChatMessages(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<ChatMessage> messages = chatFacade.getChatMessages(id, userDetails.user());
         return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/{id}/affinity")
     public ResponseEntity<?> getAffinity(
-        @PathVariable UUID id,
+        @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         AffinityData affinityData = chatFacade.getAffinity(id, userDetails.user());
@@ -81,7 +89,7 @@ public class ChatRoomController {
     
     @PostMapping("/{id}/dating/start")
     public ResponseEntity<?> startDating(
-        @PathVariable UUID id,
+        @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         chatFacade.startDating(id, userDetails.user());
@@ -90,7 +98,7 @@ public class ChatRoomController {
 
     @PostMapping("/{id}/dating/end")
     public ResponseEntity<?> endDating(
-        @PathVariable UUID id,
+        @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         chatFacade.endDating(id, userDetails.user());

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,7 +29,15 @@ public class ChatRoomService {
     private final ChatCharacterRepository chatCharacterRepository;
 
     @Transactional
-    public ChatRoomResponse createChatRoom(User user, ChatRoomCreateRequest request) {
+    public ChatRoomResponse findOrCreateChatRoom(User user, ChatRoomCreateRequest request) {
+
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository
+            .findFirstByUserAndChatCharacterIdOrderByUpdatedAtDesc(user, request.characterId());
+
+        if (existingChatRoom.isPresent()) {
+            return ChatRoomResponse.from(existingChatRoom.get());
+        }
+
         ChatCharacter chatCharacter = chatCharacterRepository.findById(request.characterId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
 
@@ -39,11 +48,11 @@ public class ChatRoomService {
 
         chatRoomRepository.save(chatRoom);
 
-        return ChatRoomResponse.from(chatRoom);
+        return ChatRoomResponse.createFrom(chatRoom);
     }
 
     public List<ChatRoomResponse> getChatRooms(User user) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByUserOrderByCreatedAtDesc(user);
+        List<ChatRoom> chatRooms = chatRoomRepository.findByUserOrderByUpdatedAtDesc(user);
         return chatRooms.stream()
                 .map(ChatRoomResponse::from)
                 .toList();
