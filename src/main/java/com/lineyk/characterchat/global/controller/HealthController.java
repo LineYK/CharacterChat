@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthController {
 
     @GetMapping
-    public ResponseEntity<?> getHealth() {
+    public ResponseEntity<String> getHealth() {
         return ResponseEntity.ok("ChatCharacter 서비스 잘 동작 중!");
     }
 

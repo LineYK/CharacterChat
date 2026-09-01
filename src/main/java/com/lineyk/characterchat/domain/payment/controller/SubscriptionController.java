@@ -33,7 +33,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("/plans")
-    public ResponseEntity<?> getPlans() {
+    public ResponseEntity<List<SubscriptionPlanResponse>> getPlans() {
         List<SubscriptionPlanResponse> plans = subscriptionService.getActiveSubscriptionPlans()
             .stream()
             .map(SubscriptionPlanResponse::from)
@@ -43,7 +43,7 @@ public class SubscriptionController {
     }
     
     @PostMapping
-    public ResponseEntity<?> subscribe(
+    public ResponseEntity<SubscriptionResponse> subscribe(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestBody SubscribeRequest request
     ) {
@@ -52,7 +52,7 @@ public class SubscriptionController {
     }
     
     @GetMapping("/me")
-    public ResponseEntity<?> getMySubscription(
+    public ResponseEntity<SubscriptionResponse> getMySubscription(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         SubscriptionResponse response = subscriptionFacade.getSubscription(userDetails.user());
@@ -60,7 +60,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/claim")
-    public ResponseEntity<?> claimDailyCredits(
+    public ResponseEntity<SubscriptionResponse> claimDailyCredits(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         SubscriptionResponse response = subscriptionFacade.claimDailyCredits(userDetails.user());
@@ -68,7 +68,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<?> cancelSubscription(
+    public ResponseEntity<SubscriptionResponse> cancelSubscription(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         SubscriptionResponse response = subscriptionFacade.cancelSubscription(userDetails.user());

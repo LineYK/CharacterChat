@@ -31,7 +31,7 @@ public class UserController {
         security = {}
     )
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
+    public ResponseEntity<UserResponse> signup(@Valid @RequestBody SignupRequest request) {
         UserResponse response = signupApplication.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -42,7 +42,7 @@ public class UserController {
         security = {}
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = userService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -52,7 +52,7 @@ public class UserController {
         description = "현재 로그인한 사용자의 정보를 조회합니다."
     )
     @GetMapping("/me")
-    public ResponseEntity<?> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.user();
         return ResponseEntity.ok(UserResponse.from(user));
     }

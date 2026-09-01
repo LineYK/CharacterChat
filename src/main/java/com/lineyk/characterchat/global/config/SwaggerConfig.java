@@ -1,5 +1,9 @@
 package com.lineyk.characterchat.global.config;
 
+import com.lineyk.characterchat.domain.chat.dto.ChatRequest;
+import io.swagger.v3.core.converter.ModelConverters;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -26,5 +30,13 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
     bearerFormat = "JWT"
 )
 public class SwaggerConfig {
-    
+
+    @Bean
+    public OpenApiCustomizer webSocketSchemaCustomizer() {
+        return openApi -> {
+            ModelConverters.getInstance()
+                .read(ChatRequest.class)
+                .forEach(openApi.getComponents()::addSchemas);
+        };
+    }
 }

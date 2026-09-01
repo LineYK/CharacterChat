@@ -9,10 +9,6 @@ import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
 import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -40,7 +36,7 @@ public class ChatRoomController {
     }
 
     @PostMapping
-    public ResponseEntity<?> findOrCreate(
+    public ResponseEntity<ChatRoomResponse> findOrCreate(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody ChatRoomCreateRequest request
             ) {
@@ -48,38 +44,32 @@ public class ChatRoomController {
         return response.isCreated() ? ResponseEntity.status(HttpStatus.CREATED).body(response) : ResponseEntity.ok(response);
     }
 
-    @Operation(responses = {
-        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ChatRoomResponse.class)))
-    })
     @GetMapping
-    public ResponseEntity<?> getChatRooms(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<ChatRoomResponse>> getChatRooms(@AuthenticationPrincipal CustomUserDetails userDetails) {
         List<ChatRoomResponse> chatRooms = chatRoomService.getChatRooms(userDetails.user());
         return ResponseEntity.ok(chatRooms);
     }
 
-    @Operation(responses = {
-        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ChatRoomResponse.class)))
-    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getChatRoom(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ChatRoomResponse> getChatRoom(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         ChatRoomResponse response = chatRoomService.getChatRoom(id, userDetails.user());
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         chatRoomService.deleteChatRoom(id, userDetails.user());
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/messages")
-    public ResponseEntity<?> getChatMessages(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable("id") UUID id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<ChatMessage> messages = chatFacade.getChatMessages(id, userDetails.user());
         return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/{id}/affinity")
-    public ResponseEntity<?> getAffinity(
+    public ResponseEntity<AffinityData> getAffinity(
         @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -88,7 +78,7 @@ public class ChatRoomController {
     }
     
     @PostMapping("/{id}/dating/start")
-    public ResponseEntity<?> startDating(
+    public ResponseEntity<Void> startDating(
         @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -97,7 +87,7 @@ public class ChatRoomController {
     }
 
     @PostMapping("/{id}/dating/end")
-    public ResponseEntity<?> endDating(
+    public ResponseEntity<Void> endDating(
         @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {

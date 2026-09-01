@@ -36,7 +36,7 @@ public class PaymentController {
     private final PaymentFacade paymentFacade;
 
     @GetMapping("/packages")
-    public ResponseEntity<?> getPackages() {
+    public ResponseEntity<List<CreditPackResponse>> getPackages() {
         List<CreditPackResponse> packages = paymentService.getActiveCreditPackages()
             .stream()
             .map(CreditPackResponse::from)
@@ -45,7 +45,7 @@ public class PaymentController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<?> createOrder(
+    public ResponseEntity<PaymentResponse> createOrder(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestBody OrderRequest request
     ) {
@@ -57,7 +57,7 @@ public class PaymentController {
     
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmPayment(
+    public ResponseEntity<PaymentResponse> confirmPayment(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestBody PaymentRequest request
     ) {
@@ -66,7 +66,7 @@ public class PaymentController {
     }
     
     @GetMapping("/history")
-    public ResponseEntity<?> getPaymentHistory(
+    public ResponseEntity<List<PaymentResponse>> getPaymentHistory(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<PaymentResponse> history = paymentService.getPaymentsHistory(userDetails.user())
@@ -77,13 +77,13 @@ public class PaymentController {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<?> handleWebhook(@RequestBody TossWebhookRequest request) {
+    public ResponseEntity<Void> handleWebhook(@RequestBody TossWebhookRequest request) {
         paymentFacade.handleWebhook(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/refund")
-    public ResponseEntity<?> refundPayment(
+    public ResponseEntity<PaymentResponse> refundPayment(
         @PathVariable("id") UUID paymentId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
