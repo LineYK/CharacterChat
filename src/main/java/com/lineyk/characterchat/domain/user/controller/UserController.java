@@ -7,6 +7,7 @@ import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.dto.UserResponse;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.service.UserService;
+import com.lineyk.characterchat.domain.wallet.service.WalletService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final WalletService walletService;
     private final SignupFacade signupApplication;
 
     @Operation(
@@ -54,6 +56,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.user();
-        return ResponseEntity.ok(UserResponse.from(user));
+        long credits = walletService.getAvailableCredits(user.getId());
+        return ResponseEntity.ok(UserResponse.from(user, credits));
     }
 }

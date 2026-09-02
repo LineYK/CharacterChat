@@ -144,4 +144,10 @@ public class WalletService {
                 .build();
         transactionRepository.save(tx);
     }
+
+    public long getAvailableCredits(UUID userId) {
+        return walletRepository.findByUserId(userId)
+                .map(Wallet::getCredits)
+                .orElse(0L);
+    }
 }
