@@ -42,9 +42,9 @@ public class UserService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        String accessToken = jwtTokenProvider.generateToken(user.getEmail());
+        JwtTokenProvider.TokenInfo tokenInfo = jwtTokenProvider.generateToken(user.getEmail());
 
-        return LoginResponse.of(accessToken, user);
+        return LoginResponse.of(tokenInfo.accessToken(), user, tokenInfo.expirationDate());
     }
 
     public void validDuplicatedEmail(String email) {

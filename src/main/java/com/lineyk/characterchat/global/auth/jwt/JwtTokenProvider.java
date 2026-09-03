@@ -28,16 +28,20 @@ public class JwtTokenProvider {
         this.expiration = expiration;
     }
 
-    public String generateToken(String email) {
+    public record TokenInfo(String accessToken, Date expirationDate) {}
+
+    public TokenInfo generateToken(String email) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + expiration);
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .subject(email)
                 .issuedAt(now)
                 .expiration(expirationDate)
                 .signWith(secretKey)
                 .compact();
+
+        return new TokenInfo(accessToken, expirationDate);
     }
 
     public String getEmailFromToken(String token) {
