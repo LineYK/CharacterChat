@@ -10,6 +10,7 @@ public record ChatCharacterResponse(
         UUID id,
         String name,
         String description,
+        String profileImageUrl,
         CreatorResponse creator,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -28,11 +29,12 @@ public record ChatCharacterResponse(
         }
     }
 
-    public static ChatCharacterResponse from(ChatCharacter chatCharacter) {
+    public static ChatCharacterResponse from(ChatCharacter chatCharacter, String profileImageUrl) {
         return new ChatCharacterResponse(
                 chatCharacter.getId(),
                 chatCharacter.getName(),
                 chatCharacter.getDescription(),
+                profileImageUrl,
                 CreatorResponse.from(chatCharacter.getCreator()),
                 chatCharacter.getCreatedAt(),
                 chatCharacter.getUpdateAt()

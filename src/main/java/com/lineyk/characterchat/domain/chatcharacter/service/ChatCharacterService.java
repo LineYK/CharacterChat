@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lineyk.characterchat.domain.chatcharacter.dto.ChatCharacterResponse;
+import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
+import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,19 @@ public class ChatCharacterService {
     private final ChatCharacterRepository chatCharacterRepository;
 
     public List<ChatCharacterResponse> getAllChatCharacters() {
-        return chatCharacterRepository.findAll()
-            .stream()
-            .map(ChatCharacterResponse::from)
-            .toList();
+        List<Object[]> result = chatCharacterRepository.findAllWithProfileImage("profile");
+
+        return result.stream()
+                .map(row -> {
+                    ChatCharacter chatCharacter = (ChatCharacter) row[0];
+                    CharacterImage image = (CharacterImage) row[1];
+
+                    return ChatCharacterResponse.from(
+                        chatCharacter, 
+                        image != null ? image.getImageUrl() : null
+                    );
+                })
+                .toList();
     }
     
 }
