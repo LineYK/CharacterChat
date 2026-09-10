@@ -5,6 +5,10 @@ import com.lineyk.characterchat.domain.chatcharacter.entity.CharacterImage;
 import com.lineyk.characterchat.domain.chatcharacter.entity.ChatCharacter;
 import com.lineyk.characterchat.domain.chatcharacter.repository.CharacterImageRepository;
 import com.lineyk.characterchat.domain.chatcharacter.repository.ChatCharacterRepository;
+import com.lineyk.characterchat.domain.payment.entity.CreditPackage;
+import com.lineyk.characterchat.domain.payment.entity.SubscriptionPlan;
+import com.lineyk.characterchat.domain.payment.repository.CreditPackageRepository;
+import com.lineyk.characterchat.domain.payment.repository.SubscriptionPlanRepository;
 import com.lineyk.characterchat.domain.user.dto.SignupRequest;
 import com.lineyk.characterchat.domain.user.entity.User;
 import com.lineyk.characterchat.domain.user.repository.UserRepository;
@@ -33,6 +37,8 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ChatCharacterRepository chatCharacterRepository;
     private final CharacterImageRepository characterImageRepository;
+    private final CreditPackageRepository creditPackageRepository;
+    private final SubscriptionPlanRepository subscriptionPlanRepository;
 
     private final SignupFacade signupApplication;
 
@@ -137,6 +143,50 @@ public class DataInitializer implements CommandLineRunner {
         );
 
         characterImageRepository.saveAll(images);
+
+        List<CreditPackage> creditPackages = List.of(
+                CreditPackage.builder()
+                        .name("베이직 크레딧 패키지")
+                        .price(1000)
+                        .baseCredits(1000)
+                        .bonusCredits(0)
+                        .sortOrder(1)
+                        .build(),
+                CreditPackage.builder()
+                        .name("보너스 크레딧 패키지")
+                        .price(5000)
+                        .baseCredits(5000)
+                        .bonusCredits(500)
+                        .sortOrder(2)
+                        .build(),
+                CreditPackage.builder()
+                        .name("프리미엄 크레딧 패키지")
+                        .price(10000)
+                        .baseCredits(10000)
+                        .bonusCredits(1500)
+                        .sortOrder(3)
+                        .build()
+        );
+        
+        creditPackageRepository.saveAll(creditPackages);
+
+        List<SubscriptionPlan> subscriptionPlans = List.of(
+                SubscriptionPlan.builder()
+                        .name("베이직 구독")
+                        .monthlyPrice(5000)
+                        .dailyCredit(200)
+                        .initialCredit(5000)
+                        .sortOrder(1)
+                        .build(),
+                SubscriptionPlan.builder()
+                        .name("프리미엄 구독")
+                        .monthlyPrice(10000)
+                        .dailyCredit(500)
+                        .initialCredit(10000)
+                        .sortOrder(2)
+                        .build()
+        );
+        subscriptionPlanRepository.saveAll(subscriptionPlans);
     }
 
     private String copySeedFile(String characterName, String fileName, String directory) throws IOException {
