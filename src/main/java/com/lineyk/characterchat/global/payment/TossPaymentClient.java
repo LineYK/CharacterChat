@@ -49,7 +49,10 @@ public class TossPaymentClient {
             .retrieve()
             .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                 response -> response.bodyToMono(String.class)
-                    .map(errorBody -> new CustomException(ErrorCode.PAYMENT_CONFIRM_FAILED)))
+                    .map(errorBody -> {
+                        log.error("❌ Toss Confirm Error Response: {}", errorBody);
+                        return new CustomException(ErrorCode.PAYMENT_CONFIRM_FAILED);
+                    }))
             .bodyToMono(TossConfirmResponse.class)
             .block();            
     }
@@ -85,6 +88,27 @@ public class TossPaymentClient {
                         return new CustomException(ErrorCode.PAYMENT_CONFIRM_FAILED);
                     }))
             .bodyToMono(TossConfirmResponse.class)
+            .block();
+    }
+
+    public String issueBillingKey(String authKey, String customerKey) {
+        Map<String, Object> body = Map.of(
+            "authKey", authKey,
+            "customerKey", customerKey
+        );
+
+        return webClient.post()
+            .uri("/billing/authorizations/issue")
+            .bodyValue(body)
+            .retrieve()
+            .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                response -> response.bodyToMono(String.class)
+                    .map(errorBody -> {
+                        log.error("Toss Billing Key Issue Error: {}", errorBody);
+                        return new CustomException(ErrorCode.PAYMENT_BILLING_KEY_ISSUE_FAILED);
+                    }))
+            .bodyToMono(Map.class)
+            .map(res -> (String) res.get("billingKey"))
             .block();
     }
 }

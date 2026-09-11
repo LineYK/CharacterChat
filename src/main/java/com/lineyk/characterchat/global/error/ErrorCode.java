@@ -46,6 +46,7 @@ public enum ErrorCode {
     PAYMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "결제에 대한 접근 권한이 없습니다."),
     PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소에 실패했습니다."),
     REFUND_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "환불 가능 기간이 만료되었습니다."),
+    PAYMENT_BILLING_KEY_ISSUE_FAILED(HttpStatus.BAD_REQUEST, "빌링 키 발급에 실패했습니다."),
 
     // 구독
     SUBSCRIPTION_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 구독 플랜입니다."),

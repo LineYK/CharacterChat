@@ -1,5 +1,7 @@
 package com.lineyk.characterchat.application.payment;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +32,20 @@ public class SubscriptionFacade {
     @Transactional
     public SubscriptionResponse subscribe(User user, SubscribeRequest request) {
         subscriptionService.validateNoSubscription(user);
-
         SubscriptionPlan plan = subscriptionService.getPlanById(request.planId());
 
-        tossPaymentClient.confirmPayment(request.paymentKey(), request.orderId(), request.amount());
+        String billingKey = tossPaymentClient.issueBillingKey(request.authKey(), request.customerKey());
 
-        Subscription subscription = subscriptionService.createSubscription(user, plan, null); // TODO: billingKey 구현
+        String orderId = UUID.randomUUID().toString();
+        tossPaymentClient.executeBillingKey(
+            billingKey,
+            orderId,
+            request.customerKey(),
+            plan.getMonthlyPrice(),
+            plan.getName()
+        );
+        
+        Subscription subscription = subscriptionService.createSubscription(user, plan, billingKey);
 
         walletService.chargeCredits(user.getId(), plan.getInitialCredit(), subscription.getId());
         return SubscriptionResponse.from(subscription);
