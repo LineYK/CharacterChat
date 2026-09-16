@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/subscriptions")
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class SubscriptionController {
     @PostMapping
     public ResponseEntity<SubscriptionResponse> subscribe(
         @AuthenticationPrincipal CustomUserDetails userDetails,
-        @RequestBody SubscribeRequest request
+        @Valid @RequestBody SubscribeRequest request
     ) {
         SubscriptionResponse response = subscriptionFacade.subscribe(userDetails.user(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

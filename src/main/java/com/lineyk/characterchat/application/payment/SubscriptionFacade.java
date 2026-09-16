@@ -32,6 +32,13 @@ public class SubscriptionFacade {
     @Transactional
     public SubscriptionResponse subscribe(User user, SubscribeRequest request) {
         subscriptionService.validateNoSubscription(user);
+
+        // 보안 검증: 요청된 customerKey가 로그인된 사용자의 유효한 customerKey인지 확인
+        String expectedCustomerKey = tossPaymentClient.generateCustomerKey(user.getId());
+        if (!expectedCustomerKey.equals(request.customerKey())) {
+            throw new CustomException(ErrorCode.PAYMENT_ACCESS_DENIED);
+        }
+
         SubscriptionPlan plan = subscriptionService.getPlanById(request.planId());
 
         String billingKey = tossPaymentClient.issueBillingKey(request.authKey(), request.customerKey());

@@ -32,6 +32,10 @@ public class PaymentFacade {
     private final WalletService walletService;
     private final TossPaymentClient tossPaymentClient;
 
+    public String getCustomerKey(User user) {
+        return tossPaymentClient.generateCustomerKey(user.getId());
+    }
+
     @Transactional
     public PaymentResponse confirmPayment(User user, PaymentRequest request) {
         Payment payment = paymentService.getPaymentByOrderId(request.orderId());

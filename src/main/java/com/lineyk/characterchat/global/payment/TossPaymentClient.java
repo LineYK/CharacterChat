@@ -13,6 +13,9 @@ import com.lineyk.characterchat.global.error.CustomException;
 import com.lineyk.characterchat.global.error.ErrorCode;
 import com.lineyk.characterchat.global.payment.dto.TossConfirmResponse;
 
+import java.util.UUID;
+import com.lineyk.characterchat.global.payment.util.TossCustomerKeyUtil;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,11 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 public class TossPaymentClient {
     
     private final WebClient webClient;
+    private final String secretKey;
 
     public TossPaymentClient(
         @Value("${toss.payment.secret-key}") String secretKey,
         @Value("${toss.payment.base-url}") String baseUrl
     ) {
+        this.secretKey = secretKey;
 
         String encodedKey = Base64.getEncoder()
             .encodeToString((secretKey + ":").getBytes());
@@ -34,6 +39,10 @@ public class TossPaymentClient {
             .defaultHeader(HttpHeaders.AUTHORIZATION, "Basic " + encodedKey)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
+    }
+
+    public String generateCustomerKey(UUID userId) {
+        return TossCustomerKeyUtil.generateCustomerKey(userId, this.secretKey);
     }
 
     public TossConfirmResponse confirmPayment(String paymentKey, String orderId, int amount) {

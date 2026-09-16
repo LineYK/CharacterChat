@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lineyk.characterchat.application.payment.PaymentFacade;
 import com.lineyk.characterchat.domain.payment.dto.CreditPackResponse;
+import com.lineyk.characterchat.domain.payment.dto.CustomerKeyResponse;
 import com.lineyk.characterchat.domain.payment.dto.OrderRequest;
 import com.lineyk.characterchat.domain.payment.dto.PaymentRequest;
 import com.lineyk.characterchat.domain.payment.dto.PaymentResponse;
@@ -42,6 +43,14 @@ public class PaymentController {
             .map(CreditPackResponse::from)
             .toList();
         return ResponseEntity.ok(packages);
+    }
+
+    @GetMapping("/customer-key")
+    public ResponseEntity<CustomerKeyResponse> getCustomerKey(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        String customerKey = paymentFacade.getCustomerKey(userDetails.user());
+        return ResponseEntity.ok(new CustomerKeyResponse(customerKey));
     }
 
     @PostMapping("/orders")
