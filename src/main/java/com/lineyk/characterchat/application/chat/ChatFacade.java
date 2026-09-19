@@ -15,6 +15,7 @@ import com.lineyk.characterchat.domain.chat.entity.Sender;
 import com.lineyk.characterchat.domain.chat.dto.AffinityData;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRequest;
+import com.lineyk.characterchat.domain.chat.dto.DatingStartResponse;
 import com.lineyk.characterchat.domain.chat.dto.MessageSegment;
 import com.lineyk.characterchat.domain.chat.event.ChatSavedEvent;
 import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
@@ -91,13 +92,14 @@ public class ChatFacade {
     }
 
     @Transactional
-    public void startDating(UUID chatRoomId, User user) {
+    public DatingStartResponse startDating(UUID chatRoomId, User user) {
         ChatRoom chatRoom = chatRoomService.findChatRoomWithAuth(chatRoomId, user);
         ChatCharacter chatCharacter = chatRoom.getChatCharacter();
-        if (!chatCharacter.isDatingEnabled() || !chatRoom.isDatingAvailable()) {
+        if (!chatCharacter.isDatingEnabled() || !chatRoom.isDatingAvailable() || chatCharacter.getVrmModelUrl() == null) {
             throw new CustomException(ErrorCode.DATING_NOT_AVAILABLE);
         }
         chatRoom.startDating();
+        return DatingStartResponse.of(chatRoom);
     }
 
     @Transactional

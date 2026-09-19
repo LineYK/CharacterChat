@@ -6,6 +6,7 @@ import com.lineyk.characterchat.domain.chat.dto.AiModelResponse;
 import com.lineyk.characterchat.domain.chat.dto.ChatMessage;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomCreateRequest;
 import com.lineyk.characterchat.domain.chat.dto.ChatRoomResponse;
+import com.lineyk.characterchat.domain.chat.dto.DatingStartResponse;
 import com.lineyk.characterchat.domain.chat.service.ChatRoomService;
 import com.lineyk.characterchat.global.auth.security.CustomUserDetails;
 
@@ -78,12 +79,12 @@ public class ChatRoomController {
     }
     
     @PostMapping("/{id}/dating/start")
-    public ResponseEntity<Void> startDating(
+    public ResponseEntity<DatingStartResponse> startDating(
         @PathVariable("id") UUID id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        chatFacade.startDating(id, userDetails.user());
-        return ResponseEntity.ok().build();
+        DatingStartResponse response = chatFacade.startDating(id, userDetails.user());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/dating/end")
