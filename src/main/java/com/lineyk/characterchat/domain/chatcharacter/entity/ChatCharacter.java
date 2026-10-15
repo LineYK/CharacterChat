@@ -59,5 +59,6 @@ public class ChatCharacter {
         this.description = description;
         this.creator = creator;
         this.vrmModelUrl = vrmModelUrl;
+        this.datingEnabled = vrmModelUrl != null && !vrmModelUrl.isEmpty();
     }
 }

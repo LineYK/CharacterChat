@@ -58,7 +58,7 @@ public class ChatRoom {
     }
 
     public long getNextThreshold() {
-        return (this.datingCount + 1) * 10L; 
+        return 0L; 
     }
 
     public boolean isDatingAvailable() {

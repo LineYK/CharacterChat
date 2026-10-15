@@ -55,3 +55,6 @@ uploads/
 # Seed files
 src/main/resources/seed/**/*.vrm
 src/main/resources/seed/**/*.png
+
+# Docs
+docs/
