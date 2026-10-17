@@ -47,12 +47,6 @@ public class AiChatAsyncProcessor {
 
             Chat aiChat = aiService.requestAiResponse(userChatId, chatRoomId, aiModel, images);
 
-            // 사용자 메시지와 크레딧 사용 확정 처리
-            chatService.markAsProcessed(userChatId);
-            walletService.confirmCredits(userChatId);
-
-            AffinityData affinity = chatService.increaseAffinityGet(chatRoomId);
-
             List<MessageSegment> segments = null;
             EmotionData emotion = null;
             
@@ -62,6 +56,12 @@ public class AiChatAsyncProcessor {
                 Map<String, String> tagToUrlMap = ImageTagParser.buildTagToImageUrlMap(images);
                 segments = ImageTagParser.parse(aiChat.getMessage(), tagToUrlMap);
             }
+            
+            // 사용자 메시지와 크레딧 사용 확정 처리
+            chatService.markAsProcessed(userChatId);
+            walletService.confirmCredits(userChatId);
+
+            AffinityData affinity = chatService.increaseAffinityGet(chatRoomId);
 
             messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, ChatMessage.fromAi(aiChat, segments, emotion, affinity));
         } catch (Exception e) {
